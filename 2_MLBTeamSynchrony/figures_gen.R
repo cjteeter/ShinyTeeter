@@ -10,19 +10,14 @@ rs_ra_roll_plot <- function(m_df, year, team_code, roll_num, team_name) {
                                    RS = rollmean(team_data$R, roll_num),
                                    RA = rollmean(team_data$RA, roll_num))
         
-        team_rolling$r_diff <- team_rolling$RS - team_rolling$RA
-        team_rolling$diff_valence <- ifelse(team_rolling$r_diff >= 0, 'pos', 'neg')
-        
-        for (i in min(team_rolling$Game):max(team_rolling$Game)) {
-                team_rolling$ymin[team_rolling$Game == i] <- min(team_rolling$RS[team_rolling$Game == i], team_rolling$RA[team_rolling$Game == i])
-                team_rolling$ymax[team_rolling$Game == i] <- max(team_rolling$RS[team_rolling$Game == i], team_rolling$RA[team_rolling$Game == i])
-        }
-        
-        team_rolling$RSmin <- ifelse(team_rolling$diff_valence == 'pos', team_rolling$ymin, NA)
-        team_rolling$RSmax <- ifelse(team_rolling$diff_valence == 'pos', team_rolling$ymax, NA)
-        
-        team_rolling$RAmin <- ifelse(team_rolling$diff_valence == 'neg', team_rolling$ymin, NA)
-        team_rolling$RAmax <- ifelse(team_rolling$diff_valence == 'neg', team_rolling$ymax, NA)
+        team_rolling <- team_rolling %>% mutate(r_diff = RS - RA,
+                                                diff_valence = ifelse(r_diff >= 0, 'pos', 'neg'),
+                                                ymin = map2_dbl(RS, RA, min),
+                                                ymax = map2_dbl(RS, RA, max),
+                                                RSmin = ifelse(diff_valence == 'pos', ymin, NA),
+                                                RSmax = ifelse(diff_valence == 'pos', ymax, NA),
+                                                RAmin = ifelse(diff_valence == 'neg', ymin, NA),
+                                                RAmax = ifelse(diff_valence == 'neg', ymax, NA))
         
         hi_wtr <- round(max(max(team_rolling$RS), max(team_rolling$RA)), 0)
         ymax_fig <- ifelse(hi_wtr %% 2 == 0, (hi_wtr + 2), (hi_wtr + 3))
@@ -30,8 +25,8 @@ rs_ra_roll_plot <- function(m_df, year, team_code, roll_num, team_name) {
         avg_RS <- round(mean(team_data$R), 2)
         avg_RA <- round(mean(team_data$RA), 2)
         
-        wins <- sum(substr(team_data$Gm_result, 1, 1) == "W")
-        losses <- sum(substr(team_data$Gm_result, 1, 1) == "L")
+        wins <- sum(str_sub(team_data$Gm_result, 1, 1) == "W")
+        losses <- sum(str_sub(team_data$Gm_result, 1, 1) == "L")
         
         figure <- ggplot(team_rolling, aes(x = Game)) +
                         {if(sum(team_rolling$diff_valence == 'neg') > 0) geom_ribbon(aes(ymin = RAmin, ymax = RAmax), fill = 'firebrick3', alpha = 0.45, show.legend = F)} +
@@ -77,8 +72,8 @@ rdiff_roll_plot <- function(m_df, year, team_code, roll_num, team_name) {
                                    RS = rollmean(team_data$R, roll_num),
                                    RA = rollmean(team_data$RA, roll_num))
         
-        team_rolling$r_diff <- team_rolling$RS - team_rolling$RA
-        team_rolling$diff_valence <- ifelse(team_rolling$r_diff >= 0, 'pos', 'neg')
+        team_rolling <- team_rolling %>% mutate(r_diff = RS - RA,
+                                                diff_valence = ifelse(r_diff >= 0, 'pos', 'neg'))
         
         hi_diff <- round(max(abs(team_rolling$r_diff)), 0)
         ymax_fig <- ifelse(hi_diff %% 2 == 0, (hi_diff + 2), (hi_diff + 3))
@@ -87,8 +82,8 @@ rdiff_roll_plot <- function(m_df, year, team_code, roll_num, team_name) {
         avg_RA <- round(mean(team_data$RA), 2)
         avg_R_diff <- round(avg_RS - avg_RA, 2)
         
-        wins <- sum(substr(team_data$Gm_result, 1, 1) == "W")
-        losses <- sum(substr(team_data$Gm_result, 1, 1) == "L")
+        wins <- sum(str_sub(team_data$Gm_result, 1, 1) == "W")
+        losses <- sum(str_sub(team_data$Gm_result, 1, 1) == "L")
         
         figure <- ggplot(team_rolling, aes(x = Game, y = r_diff, fill = diff_valence, colour = diff_valence)) +
                 geom_bar(stat = 'identity') +
