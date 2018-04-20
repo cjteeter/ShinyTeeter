@@ -1,5 +1,7 @@
 ##### Helper File - Figure Creation ####
 
+curSeason <- 2018
+
 ### Runs Scored and Runs Allowed Plot
 rs_ra_roll_plot <- function(m_df, year, team_code, roll_num, team_name) {
         team_data <- m_df %>% filter(Year == year, Tm_Current == team_code)
@@ -21,6 +23,8 @@ rs_ra_roll_plot <- function(m_df, year, team_code, roll_num, team_name) {
         
         hi_wtr <- round(max(max(team_rolling$RS), max(team_rolling$RA)), 0)
         ymax_fig <- ifelse(hi_wtr %% 2 == 0, (hi_wtr + 2), (hi_wtr + 3))
+        xmax_fig <- if (year == curSeason & max(team_rolling$Game) < 136) { round_any(max(team_rolling$Game)*1.1, 5, f = ceiling)} else { 162 }
+        xscale <- if (year == curSeason & max(team_rolling$Game) <= 100) { seq(10, 100, 10) } else { seq(25, 150, 25) }
         
         avg_RS <- round(mean(team_data$R), 2)
         avg_RA <- round(mean(team_data$RA), 2)
@@ -38,7 +42,7 @@ rs_ra_roll_plot <- function(m_df, year, team_code, roll_num, team_name) {
                         xlab("Game Number") +
                         ylab(paste(roll_num, "-game Rolling Average of Runs", sep="")) +
                         scale_y_continuous(breaks=seq(0.0, ymax_fig, 2.0), limits=c(0.0, ymax_fig)) +
-                        scale_x_continuous(breaks=c(1, seq(25,150,25), 162), limits = c(1, 162), expand = c(0.025, 0)) +
+                        scale_x_continuous(breaks=c(1, xscale, xmax_fig), limits = c(1, xmax_fig), expand = c(0.025, 0)) +
                         labs(caption = "cteeter.ca") +
                         theme_bw() +
                         theme(plot.title = element_text(face="bold", size=28, vjust=0.5, hjust=0.5),
@@ -77,6 +81,8 @@ rdiff_roll_plot <- function(m_df, year, team_code, roll_num, team_name) {
         
         hi_diff <- round(max(abs(team_rolling$r_diff)), 0)
         ymax_fig <- ifelse(hi_diff %% 2 == 0, (hi_diff + 2), (hi_diff + 3))
+        xmax_fig <- if (year == curSeason & max(team_rolling$Game) < 136) { round_any(max(team_rolling$Game)*1.1, 5, f = ceiling)} else { 162 }
+        xscale <- if (year == curSeason & max(team_rolling$Game) <= 100) { seq(10, 100, 10) } else { seq(25, 150, 25) }
         
         avg_RS <- round(mean(team_data$R), 2)
         avg_RA <- round(mean(team_data$RA), 2)
@@ -108,7 +114,7 @@ rdiff_roll_plot <- function(m_df, year, team_code, roll_num, team_name) {
                 xlab("Game Number") +
                 ylab(paste(roll_num, "-game Rolling Average Run Differential", sep="")) +
                 scale_y_continuous(breaks=seq(-ymax_fig, ymax_fig, 2.0), limits=c(-ymax_fig, ymax_fig)) +
-                scale_x_continuous(breaks=c(1, seq(25,150,25), 162), limits = c(1, 162), expand = c(0.025, 0)) +
+                scale_x_continuous(breaks=c(1, xscale, xmax_fig), limits = c(1, xmax_fig), expand = c(0.025, 0)) +
                 labs(caption = "cteeter.ca") +
                 theme_bw() +
                 guides(fill = guide_legend(reverse = T)) +

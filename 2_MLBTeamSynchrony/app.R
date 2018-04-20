@@ -1,4 +1,4 @@
-##### Shiny App for Viewing the Synchrony of MLB Teams 1998-2017 #####
+##### Shiny App for Viewing the Synchrony of MLB Teams 1998-2018 #####
 
 # Load required packages -------------------------------
 require(shiny)
@@ -9,7 +9,9 @@ require(dplyr)
 require(tidyr)
 require(ggplot2)
 require(purrr)
+require(rvest)
 require(stringr)
+require(curl)
 require(zoo)
 
 # Load Helper files -------------------------------
@@ -18,8 +20,13 @@ source("datatables_gen.R")
 source("teams_updater.R")
 
 # Load data -------------------------------
-master_data <- read.csv("data/MLB_teamSchedulesResults_1998-2017.csv", stringsAsFactors = F)
+master_data <- read.csv(curl(sprintf("https://docs.google.com/uc?id=%s&export=download", "1bm804dqxGoy_0HPNHmBihdrRTcQX0CXr")), stringsAsFactors = F, na.strings = "")
 teams_df <- read.csv("data/MLB_teamCodes-Lg-Div_1998-2017.csv", stringsAsFactors = F)
+
+# Set some variable values -------------------------------
+curSeason <- 2018
+minGames <- min((master_data %>% filter(Year == curSeason) %>% group_by(Tm) %>% summarise(Games = max(as.numeric(Gm_num))))$Games)
+sl.max <- ifelse(minGames <= 50, minGames-1, 50)
 
 # Create user interface -------------------------------
 ui <- fluidPage(theme = shinytheme('spacelab'),
@@ -32,23 +39,30 @@ ui <- fluidPage(theme = shinytheme('spacelab'),
           tags$em('out-of-sync'), "teams have one component performing well and one struggling. This app helps demonstrate the variability in- and synchrony (or lack thereof) between a teams' run scoring and prevention over a season.", style = "font-size: 90%"),
         p("Given a season, team, and the number of games to be averaged over, the app will", tags$em('Generate'), "four things: (1) a plot of the team's
           average runs scored and allowed that season, (2) a complementary plot of the average run differential, (3) the data used to create the plots, and (4) a standings-like table for that season.
-          Data are from the 1998 to 2017 seasons. The", tags$em('Reset'), "button will reload the page.", style = "font-size: 90%"),
+          Data are available for the ", min(master_data$Year), " to ", curSeason, "seasons. The", tags$em('Reset'), "button will reload the page.", style = "font-size: 90%"),
+        p(tags$em('Note: the 2018 data are updated on a nightly basis'), style = "font-size: 80%"), 
         hr(),
         # User Input Section -------------------------------
         sidebarLayout(
                 sidebarPanel(
                         selectizeInput(inputId = "season_choice", label = tags$h4("Select Season:"),
-                                    choices = seq(2017, 1998, -1),
+                                    choices = seq(curSeason, min(master_data$Year), -1),
                                     options = list(placeholder = 'Select a season', onInitialize = I('function() { this.setValue(""); }'))),
                         hr(),
                         selectizeInput(inputId = "team_choice", label = tags$h4("Select Team:"),
                                     choices = teams_df$Full.Name,
                                     options = list(placeholder = 'Select a team', onInitialize = I('function() { this.setValue(""); }'))),
                         hr(),
-                        # Remove the minor ticks on the slider
-                        tags$style(type = "text/css", ".irs-grid-pol.small {height: 0px;}"),
-                        sliderInput(inputId = "rolling_choice", label = tags$h4("Select number of games for rolling average"),
-                                     min = 5, max = 50, value = 0, step = 1),
+                        conditionalPanel(condition = "input.season_choice == '2018'",
+                                # Remove the minor ticks on the slider
+                                tags$style(type = "text/css", ".irs-grid-pol.small {height: 0px;}"),
+                                sliderInput(inputId = "rolling_choice_curS", label = tags$h4("Select number of games for rolling averages of RS and RA:"),
+                                        min = 5, max = sl.max, value = 0, step = 1)),
+                        conditionalPanel(condition = "input.season_choice != '2018'",
+                                # Remove the minor ticks on the slider
+                                tags$style(type = "text/css", ".irs-grid-pol.small {height: 0px;}"),
+                                sliderInput(inputId = "rolling_choice", label = tags$h4("Select number of games for rolling averages of RS and RA:"),
+                                min = 5, max = 50, value = 0, step = 1)),
                         hr(),
                         actionButton(inputId = 'generate', label = 'Generate', icon = icon("bolt"), class = 'btn-primary'),
                         actionButton(inputId = 'reset', label = 'Reset', icon = icon("refresh"), class = 'btn-warning')),
@@ -113,12 +127,12 @@ ui <- fluidPage(theme = shinytheme('spacelab'),
         p("App created by ", tags$a(href = "http://www.cteeter.ca", 'Chris Teeter', target = '_blank'), " in November 2017", HTML("&bull;"), "Follow Chris on Twitter:", tags$a(href = "https://twitter.com/c_mcgeets", tags$i(class = 'fa fa-twitter'), target = '_blank'),
           HTML("&bull;"), "Find the code on Github:", tags$a(href = "https://github.com/cjteeter/ShinyTeeter/tree/master/2_MLBTeamSynchrony", tags$i(class = 'fa fa-github', style = 'color:#5000a5'), target = '_blank'), style = "font-size: 85%"),
         p("Have a question? Send an email ", tags$a(href = "mailto:christopher.teeter@gmail.com", tags$i(class = 'fa fa-envelope', style = 'color:#990000'), target = '_blank'), style = "font-size: 85%"),
-        p(tags$em("Last updated: March 2018"), style = 'font-size:75%')
+        p(tags$em("Last updated: April 2018"), style = 'font-size:75%')
 )
 
 # Server logic -----------------------------------
 server <- function(input, output, session) {
-        
+
         # Check for events and create outputs -------------------------------
         observeEvent(input$reset, { session$reload() } )
         
@@ -126,7 +140,7 @@ server <- function(input, output, session) {
         
         # First Tab - RS_RA Figure -----------------------------------
         eventPlot_rsra <- eventReactive(input$generate, isolate({
-                                        rs_ra_roll_plot(master_data, input$season_choice, teams_df$Team.Code[teams_df$Full.Name == team_flip(input$team_choice)], input$rolling_choice, input$team_choice)
+                                        rs_ra_roll_plot(master_data, input$season_choice, teams_df$Team.Code[teams_df$Full.Name == team_flip(input$team_choice)], {ifelse(input$season_choice == 2018, input$rolling_choice_curS, input$rolling_choice)}, input$team_choice)
         }))
         
         output$figure_rsra <- renderPlot(eventPlot_rsra())
@@ -139,7 +153,7 @@ server <- function(input, output, session) {
                                     as.character({ paste(isolate(input$season_choice), isolate(input$team_choice), 'schedule and results on Baseball-Reference.com') }))
         output$fig_link_rsra <- renderUI({ tags$a(href = link1(), eventLink1(), target = '_blank') })
         
-        eventPlot_rsra_dl <- function(){ isolate(rs_ra_roll_plot(master_data, input$season_choice, teams_df$Team.Code[teams_df$Full.Name == team_flip(input$team_choice)], input$rolling_choice, input$team_choice))}
+        eventPlot_rsra_dl <- function(){ isolate(rs_ra_roll_plot(master_data, input$season_choice, teams_df$Team.Code[teams_df$Full.Name == team_flip(input$team_choice)], {ifelse(input$season_choice == 2018, input$rolling_choice_curS, input$rolling_choice)}, input$team_choice))}
         
         output$dl_fig_rsra <- downloadHandler(filename = function() { paste('MLBsyncrony_', isolate(input$season_choice), '_', teams_df$Team.Code[teams_df$Full.Name == team_flip(isolate(input$team_choice))], '_RS-RA_plot_dl-', Sys.Date(), '.png', sep="") },
                                          content = function(file) {
@@ -148,14 +162,14 @@ server <- function(input, output, session) {
         
         # Second Tab - RDiff Figure -----------------------------------
         eventPlot_rdiff <- eventReactive(input$generate, isolate({
-                                        rdiff_roll_plot(master_data, input$season_choice, teams_df$Team.Code[teams_df$Full.Name == team_flip(input$team_choice)], input$rolling_choice, input$team_choice)
+                                        rdiff_roll_plot(master_data, input$season_choice, teams_df$Team.Code[teams_df$Full.Name == team_flip(input$team_choice)], {ifelse(input$season_choice == 2018, input$rolling_choice_curS, input$rolling_choice)}, input$team_choice)
         }))
         
         output$figure_rdiff <- renderPlot(eventPlot_rdiff())
         
         output$fig_link_rdiff <- renderUI({ tags$a(href = link1(), eventLink1(), target = '_blank') })
         
-        eventPlot_rdiff_dl <- function(){ isolate(rdiff_roll_plot(master_data, input$season_choice, teams_df$Team.Code[teams_df$Full.Name == team_flip(input$team_choice)], input$rolling_choice, input$team_choice))}
+        eventPlot_rdiff_dl <- function(){ isolate(rdiff_roll_plot(master_data, input$season_choice, teams_df$Team.Code[teams_df$Full.Name == team_flip(input$team_choice)], {ifelse(input$season_choice == 2018, input$rolling_choice_curS, input$rolling_choice)}, input$team_choice))}
         
         output$dl_fig_rdiff <- downloadHandler(filename = function() { paste('MLBsyncrony_', isolate(input$season_choice), '_', teams_df$Team.Code[teams_df$Full.Name == team_flip(isolate(input$team_choice))], '_RDiff_plot_dl-', Sys.Date(), '.png', sep="") },
                                          content = function(file) {
@@ -164,7 +178,7 @@ server <- function(input, output, session) {
         
         # Third Tab - Data Table for Figure -----------------------------------
         eventTable1 <- eventReactive(input$generate, isolate({
-                figdata_tbl(master_data, input$season_choice, teams_df$Team.Code[teams_df$Full.Name == team_flip(input$team_choice)], input$rolling_choice)
+                figdata_tbl(master_data, input$season_choice, teams_df$Team.Code[teams_df$Full.Name == team_flip(input$team_choice)], {ifelse(input$season_choice == 2018, input$rolling_choice_curS, input$rolling_choice)})
         }))
         
         output$figure_table <- renderDataTable({if (input$table_widelong == 'wide') { eventTable1() }
@@ -184,7 +198,7 @@ server <- function(input, output, session) {
         
         output$fig_tbl_link <- renderUI({ tags$a(href = link1(), eventLink1(), target = '_blank') })
         
-        eventTable1_dl <- function(){ isolate(figdata_tbl(master_data, input$season_choice, teams_df$Team.Code[teams_df$Full.Name == team_flip(input$team_choice)], input$rolling_choice))
+        eventTable1_dl <- function(){ isolate(figdata_tbl(master_data, input$season_choice, teams_df$Team.Code[teams_df$Full.Name == team_flip(input$team_choice)], {ifelse(input$season_choice == 2018, input$rolling_choice_curS, input$rolling_choice)}))
         }
         
         output$dl_tbl1 <- downloadHandler(filename = function() { paste('MLBsyncrony_', isolate(input$season_choice), '_', teams_df$Team.Code[teams_df$Full.Name == team_flip(isolate(input$team_choice))], '_DataTable-', {if (input$table_widelong == 'wide') { 'wide' } else { 'long' }}, '_dl-', Sys.Date(), '.csv', sep="") },
