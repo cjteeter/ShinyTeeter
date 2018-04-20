@@ -9,7 +9,6 @@ require(dplyr)
 require(tidyr)
 require(ggplot2)
 require(purrr)
-require(rvest)
 require(stringr)
 require(curl)
 require(zoo)
@@ -21,7 +20,7 @@ source("teams_updater.R")
 
 # Load data -------------------------------
 master_data <- read.csv(curl(sprintf("https://docs.google.com/uc?id=%s&export=download", "1bm804dqxGoy_0HPNHmBihdrRTcQX0CXr")), stringsAsFactors = F, na.strings = "")
-teams_df <- read.csv("data/MLB_teamCodes-Lg-Div_1998-2017.csv", stringsAsFactors = F)
+teams_df <- read.csv("data/MLB_teamCodes.csv", stringsAsFactors = F)
 
 # Set some variable values -------------------------------
 curSeason <- 2018
