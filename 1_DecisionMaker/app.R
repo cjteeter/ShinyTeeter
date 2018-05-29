@@ -11,20 +11,20 @@ ui <- fluidPage(theme = shinytheme('spacelab'),
         titlePanel("A Simple Random-Decision Maker"),
         hr(),
         # App Description
-        p("This simple app is intended to help you limit the time and effort you spend making decisions. We are confronted with many decisions everyday and often take for granted their cumulative effect on us.",
-                tags$em('What should I have for dinner? Should I go out? Where should I go? What will I order? Should I just order in? What should I order?'), "Making all of these (seemingly simple) decisions over
-                the course of a day can lead to", tags$a(href = 'https://en.wikipedia.org/wiki/Decision_fatigue', 'decision fatigue', target = '_blank'),
-                "which can lead to actually feeling fatigued and to undesirable behaviour. As such, it is best to try and limit the number of decisions we need to make in a day. This can be
-                accomplished in a number of ways, such as by automating processes, by limiting the number of options under consideration, or by leaving the choice up to chance. For example, there is research showing that",  
-                tags$a(href = 'https://www.nber.org/papers/w22487.pdf#', 'flipping a coin', target = '_blank'), "can help with making a difficult decision and may even increase happiness.
-                The strategy of leaving things up to chance, like a coin-flip, is where this app can be useful for you."),
+        p("This app is intended to help limit the time and effort you spend making decisions. We are confronted with many decisions everyday and often take for granted their cumulative effect.",
+                tags$em('What should I have for dinner? Should I go out? Where should I go? What will I order? Should I just order in? What should I order?'), "Making these seemingly simple decisions
+                can lead to", tags$a(href = 'https://en.wikipedia.org/wiki/Decision_fatigue', 'decision fatigue,', target = '_blank'),
+                "which can manifest as physical fatigue and lead to undesirable behaviour. To avoid this issue it is a good idea to find strategies that limit the number of decisions you need to make in a day. These include
+                automating the decision-making processes, limiting the number of options under consideration, and/or leaving the decision up to chance -- there is research that shows",  
+                tags$a(href = 'https://www.nber.org/papers/w22487.pdf#', 'flipping a coin', target = '_blank'), "can be an effective way to make difficult decisions and may even increase your happiness with the outcome. 
+                This strategy of leaving things up to chance, like a coin-flip, is where this app is useful."),
         hr(),
-        p("There are two ways to use the app:", tags$em('Simple'), "and", tags$em('Advanced'), ". The irony of starting things with a decision-point is not lost on me."),
-        p(tags$b('Simple'), ": Use a slider to indicate how many options you are considering. The decision-robot will return a number. You will need to know how this number maps onto your choices."),
-        p(tags$b('Advanced'), ": Type the names of the options you are considering in a text-box (e.g., Futurama, Mad Men, Seinfeld). The decision-robot will return one of those options."),
-        p("When you are ready for a decision to be made, press the", tags$em('Make Decision'), "button and the decision-robot will conjure its magic (read:", tags$code('randomly select'), "an option) for you so that you can 
-          move forward with the rest of your day."),
-        p("The", tags$em('Reset'), "button will reload the page if you want to start over and/or have it make another decision for you."),
+        p("There are two ways to use the app:", tags$em('Simple'), "and", tags$em('Advanced'), ". The irony of starting things with a decision is not lost on me."),
+        p(tags$b('Simple'), ": Use a slider to indicate the number of options under consideration. The decision-robot will return a number. You need to know how the number maps onto your choices."),
+        p(tags$b('Advanced'), ": Type the options under consideration into a text-box (e.g., Futurama, Mad Men, Seinfeld). The decision-robot will return one of the options."),
+        p("When you are ready, click the", tags$em('Make Decision'), "button to have the decision-robot conjure its magic (read:", tags$code('randomly select'), "an option) and let you
+          move forward with your day."),
+        p("If you want to start anew, the", tags$em('Reset'), "button will reload the page."),
         hr(),
         # User Input Section -------------------------------
         sidebarLayout(
@@ -86,7 +86,7 @@ ui <- fluidPage(theme = shinytheme('spacelab'),
         p("App created by ", tags$a(href = "http://www.cteeter.ca", 'Chris Teeter', target = '_blank'), " in October 2017", HTML("&bull;"), "Follow Chris on Twitter:", tags$a(href = "https://twitter.com/c_mcgeets", tags$i(class = 'fa fa-twitter'), target = '_blank'),
           HTML("&bull;"), "Find the code on Github:", tags$a(href = "https://github.com/cjteeter/ShinyTeeter/tree/master/1_DecisionMaker", tags$i(class = 'fa fa-github', style = 'color:#5000a5'), target = '_blank'), style = "font-size: 85%"),
         p("Have a question? Send an email ", tags$a(href = "mailto:christopher.teeter@gmail.com", tags$i(class = 'fa fa-envelope', style = 'color:#990000'), target = '_blank'), style = "font-size: 85%"),
-        p(tags$em("Last updated: December 2017"), style = 'font-size:75%')
+        p(tags$em("Last updated: May 2018"), style = 'font-size:75%')
 )
 
 # Server logic -----------------------------------
