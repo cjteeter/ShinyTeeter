@@ -11,16 +11,18 @@ ui <- fluidPage(theme = shinytheme('spacelab'),
         titlePanel("A Simple Random-Decision Maker"),
         hr(),
         # App Description
-        p("This app is intended to help limit the time and effort you spend making decisions. We are confronted with many decisions everyday and often take for granted their cumulative effect.",
-                tags$em('What should I have for dinner? Should I go out? Where should I go? What will I order? Should I just order in? What should I order?'), "Making these seemingly simple decisions
-                can lead to", tags$a(href = 'https://en.wikipedia.org/wiki/Decision_fatigue', 'decision fatigue,', target = '_blank'),
-                "which can manifest as physical fatigue and lead to undesirable behaviour. To avoid this issue it is a good idea to find strategies that limit the number of decisions you need to make in a day. These include
-                automating the decision-making processes, limiting the number of options under consideration, and/or leaving the decision up to chance -- there is research that shows",  
-                tags$a(href = 'https://www.nber.org/papers/w22487.pdf#', 'flipping a coin', target = '_blank'), "can be an effective way to make difficult decisions and may even increase your happiness with the outcome. 
-                This strategy of leaving things up to chance, like a coin-flip, is where this app is useful."),
+        p("This app is intended to help you limit the time and effort you spend making decisions. Even on the most standard of days we make a large number of decisions.",
+                tags$em('What should I have for dinner? Should I go out? Where should I go? What will I order? Should I just order in? What should I order?'), "While many 
+                (even most) of the decisions we make over the course of a day are fairly mundane, we often fail to account for their cumulative effect. They can lead to", 
+                tags$a(href = 'https://en.wikipedia.org/wiki/Decision_fatigue', 'decision fatigue,', target = '_blank'),
+                "which can manifest as physical fatigue and even bring about undesirable behaviour. So it seems like a good idea to find strategies that limit the mental 
+                effort you put into making decisions. Options include automating the decision-making processes, limiting the number of options under consideration, and/or 
+                leaving the decision to chance. Sometimes just", tags$a(href = 'https://www.nber.org/papers/w22487.pdf#', 'flipping a coin', target = '_blank'), "is an
+                effective way to make a decision and doing so may even increase your satisfaction with the outcome. This strategy of leaving things to chance, like the 
+                flip of a coin, is where this app is useful."),
         hr(),
-        p("There are two ways to use the app:", tags$em('Simple'), "and", tags$em('Advanced'), ". The irony of starting things with a decision is not lost on me."),
-        p(tags$b('Simple'), ": Use a slider to indicate the number of options under consideration. The decision-robot will return a number. You need to know how the number maps onto your choices."),
+        p("There are two ways to use the app:", tags$em('Simple'), "and", tags$em('Advanced'), "."),
+        p(tags$b('Simple'), ": Use a slider to indicate the number of options under consideration. The decision-robot will return a number. You need to know how the number maps onto your options."),
         p(tags$b('Advanced'), ": Type the options under consideration into a text-box (e.g., Futurama, Mad Men, Seinfeld). The decision-robot will return one of the options."),
         p("When you are ready, click the", tags$em('Make Decision'), "button to have the decision-robot conjure its magic (read:", tags$code('randomly select'), "an option) and let you
           move forward with your day."),
@@ -86,7 +88,7 @@ ui <- fluidPage(theme = shinytheme('spacelab'),
         p("App created by ", tags$a(href = "http://www.cteeter.ca", 'Chris Teeter', target = '_blank'), " in October 2017", HTML("&bull;"), "Follow Chris on Twitter:", tags$a(href = "https://twitter.com/c_mcgeets", tags$i(class = 'fa fa-twitter'), target = '_blank'),
           HTML("&bull;"), "Find the code on Github:", tags$a(href = "https://github.com/cjteeter/ShinyTeeter/tree/master/1_DecisionMaker", tags$i(class = 'fa fa-github', style = 'color:#5000a5'), target = '_blank'), style = "font-size: 85%"),
         p("Have a question? Send an email ", tags$a(href = "mailto:christopher.teeter@gmail.com", tags$i(class = 'fa fa-envelope', style = 'color:#990000'), target = '_blank'), style = "font-size: 85%"),
-        p(tags$em("Last updated: May 2018"), style = 'font-size:75%')
+        p(tags$em("Last updated: June 2018"), style = 'font-size:75%')
 )
 
 # Server logic -----------------------------------
