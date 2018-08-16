@@ -18,7 +18,7 @@ ui <- fluidPage(theme = shinytheme('spacelab'),
                 "which can manifest as physical fatigue and even bring about undesirable behaviour. So it is a good idea to find strategies that limit the mental 
                 effort you put into making decisions. Options include automating the decision-making processes, limiting the number of options under consideration, 
                 accepting the option you'll be", tags$a(href = 'https://www.nytimes.com/2018/06/04/smarter-living/how-to-finally-just-make-a-decision.html', tags$em('fine'), 'with,', target = '_blank'),
-                "and/or leaving the decision to chance.", tags$a(href = 'https://www.nber.org/papers/w22487.pdf#', 'Flipping a coin', target = '_blank'), "can be an
+                "and/or leaving the decision to chance.", "For example,", tags$a(href = 'https://www.nber.org/papers/w22487.pdf#', 'flipping a coin', target = '_blank'), "can be an
                 effective way to make a decision and doing so may even increase your satisfaction with the outcome. This strategy of leaving things to chance, like the 
                 flip of a coin, is where this application is useful."),
         hr(),
