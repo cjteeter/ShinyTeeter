@@ -20,19 +20,19 @@ update_teams <- function(tm_df, year) {
 }
 
 team_flip <- function(name) {
-        if (name == 'Anaheim Angels') { return('Los Angeles Angels') 
-        } else if (name == 'Florida Marlins') { return('Miami Marlins')
-        } else if (name == 'Tampa Bay Devil Rays') { return('Tampa Bay Rays')
-        } else if (name == 'Montreal Expos') { return('Washington Nationals')
-        } else { return(name)
-        }
+        case_when(
+                name == 'Anaheim Angels' ~ 'Los Angeles Angels',
+                name == 'Florida Marlins' ~ 'Miami Marlins',
+                name == 'Tampa Bay Devil Rays' ~ 'Tampa Bay Rays',
+                name == 'Montreal Expos' ~ 'Washington Nationals',
+                TRUE ~ name)
 }
 
 teamcode_for_link <- function(name) {
-        if (name == 'Anaheim Angels') { return('ANA') 
-        } else if (name == 'Florida Marlins') { return('FLA')
-        } else if (name == 'Tampa Bay Devil Rays') { return('TBD')
-        } else if (name == 'Montreal Expos') { return('MON')
-        } else { return(name)
-        }
+        case_when(
+                name == 'Anaheim Angels' ~ 'ANA',
+                name == 'Florida Marlins' ~ 'FLA',
+                name == 'Tampa Bay Devil Rays' ~ 'TBD',
+                name == 'Montreal Expos' ~ 'MON',
+                TRUE ~ name)
 }
