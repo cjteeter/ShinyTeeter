@@ -14,7 +14,7 @@ source("datatables_gen.R")
 source("teams_updater.R")
 
 # Load data -------------------------------
-master_data <- read.csv(curl(sprintf("https://docs.google.com/uc?id=%s&export=download", "1bm804dqxGoy_0HPNHmBihdrRTcQX0CXr")), stringsAsFactors = F, na.strings = "")
+master_data <- read.csv(curl(sprintf()), stringsAsFactors = F, na.strings = "")
 teams_df <- read.csv("data/MLB_teamCodes.csv", stringsAsFactors = F)
 
 # Set some variable values -------------------------------
@@ -244,4 +244,4 @@ server <- function(input, output, session) {
 }
 
 # Run app -------------------------------
-shinyApp(ui = ui, server = server, enableBookmarking = "url")
+shinyApp(ui = ui, server = server)
