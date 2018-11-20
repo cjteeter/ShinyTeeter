@@ -14,7 +14,7 @@ source("datatables_gen.R")
 source("teams_updater.R")
 
 # Load data -------------------------------
-master_data <- read.csv(curl(sprintf()), stringsAsFactors = F, na.strings = "")
+master_data <- read.csv(curl(sprintf("https://docs.google.com/uc?id=%s&export=download", "1bm804dqxGoy_0HPNHmBihdrRTcQX0CXr")), stringsAsFactors = F, na.strings = "")
 teams_df <- read.csv("data/MLB_teamCodes.csv", stringsAsFactors = F)
 
 # Set some variable values -------------------------------
@@ -30,9 +30,9 @@ ui <- function(request) {
         titlePanel(tags$b("MLB Team Synchrony", style = "font-size: 110%, font-family:Helvetica; color:#010151"), windowTitle = "MLB Team Synchrony"),
         hr(),
         # App Description
-        p("Over the course of a season, teams' run scoring and run prevention performance varies. Team that are", tags$em('in-sync'), "have both components performing well (or poorly) at the same time, while ", 
-          tags$em('out-of-sync'), "teams have one component performing well and one struggling. This app helps demonstrate the variability in- and synchrony (or lack thereof) between a teams' run scoring and prevention over a season.", style = "font-size: 90%"),
-        p("Given a season, team, and the number of games to be averaged over, the app will", tags$em('Generate'), "four things: (1) a plot of the team's
+        p("Teams' run scoring and run prevention performance varies throughout the season. Teams that are", tags$em('in-sync'), "have both components performing well (or poorly) at the same time, while ", 
+          tags$em('out-of-sync'), "teams have one component performing well and the other struggling. This app helps demonstrate the variability and synchrony (or lack thereof) between run scoring and prevention over a season.", style = "font-size: 90%"),
+        p("Given a season, a team, and a number of games to be averaged over, the app will", tags$em('Generate'), "four things: (1) a plot of the team's
           average runs scored and allowed that season, (2) a complementary plot of the average run differential, (3) the data used to create the plots, and (4) a standings-like table for that season.
           Data are available for the ", min(master_data$Year), " to ", curSeason, "seasons. The", tags$em('Reset'), "button will reload the page.", style = "font-size: 90%"),
         p(tags$em('Note: during the season the data are updated on a nightly basis starting on April 20th.'), style = "font-size: 80%"), 
@@ -126,7 +126,7 @@ ui <- function(request) {
         p("App created by ", tags$a(href = "https://www.cteeter.ca", 'Chris Teeter', target = '_blank'), " in November 2017", HTML("&bull;"), "Follow Chris on Twitter:", tags$a(href = "https://twitter.com/c_mcgeets", tags$i(class = 'fa fa-twitter'), target = '_blank'),
           HTML("&bull;"), "Find the code on Github:", tags$a(href = "https://github.com/cjteeter/ShinyTeeter/tree/master/2_MLBTeamSynchrony", tags$i(class = 'fa fa-github', style = 'color:#5000a5'), target = '_blank'), style = "font-size: 85%"),
         p("Have a question? Send an email ", tags$a(href = "mailto:christopher.teeter@gmail.com", tags$i(class = 'fa fa-envelope', style = 'color:#990000'), target = '_blank'), style = "font-size: 85%"),
-        p(tags$em("Last updated: October 2018"), style = 'font-size:75%')
+        p(tags$em("Last updated: November 2018"), style = 'font-size:75%')
 )
 }
 
