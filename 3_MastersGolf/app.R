@@ -85,7 +85,7 @@ ui <- navbarPage(
         tabPanel("Leaderboards",
                  fluidRow(
                          column(5,
-                                wellPanel(style = "background-color: #fff; border-color: #2c3e50; height: 750px;",
+                                wellPanel(style = "background-color: #fff; border-color: #2c3e50; height: 775px;",
                                           fluidRow(style = "margin-top: 25px;",
                                                   column(12, 
                                                          p(tags$b('Yearly Tournament Leaderboard', style = "font-size: 150%; font-family:Helvetica; color:#4c4c4c; text-align:left;")))),
@@ -97,7 +97,7 @@ ui <- navbarPage(
                                                                       selected = 2018))),
                                           DTOutput("lb_yearly_table"))),
                          column(7,
-                                wellPanel(style = "background-color: #fff; border-color: #2c3e50; height: 750px;",
+                                wellPanel(style = "background-color: #fff; border-color: #2c3e50; height: 775px;",
                                           fluidRow(style = "margin-top: 25px; margin-bottom: -10px;",
                                                    column(5, 
                                                           p(tags$b('Historical Records', style = "font-size: 150%; font-family:Helvetica; color:#4c4c4c; text-align:left;"))),
@@ -203,7 +203,7 @@ ui <- navbarPage(
         hr(style = "border-color: #cbcbcb;"),
         p('All of the data used to generate this app were obtained from ', tags$a(href = "http://www.masters.com/en_US/tournament/index.html", 'Masters.com', target = '_blank'), '.', style = "font-size: 85%"),
         p("App created by ", tags$a(href = "https://www.cteeter.ca", 'Chris Teeter', target = '_blank'), " in January 2019", HTML("&bull;"),
-          "Find the code on Github:", tags$a(href = "https://github.com/cjteeter/ShinyTeeter/tree/master/2_MLBTeamSynchrony", tags$i(class = 'fa fa-github', style = 'color:#5000a5'), target = '_blank'), style = "font-size: 85%"),
+          "Find the code on Github:", tags$a(href = "https://github.com/cjteeter/ShinyTeeter/tree/master/3_MastersGolf", tags$i(class = 'fa fa-github', style = 'color:#5000a5'), target = '_blank'), style = "font-size: 85%"),
         p("Have a question? Spot an error? Send an email ", tags$a(href = "mailto:christopher.teeter@gmail.com", tags$i(class = 'fa fa-envelope', style = 'color:#990000'), target = '_blank'), style = "font-size: 85%"),
         p(tags$em("Last updated: February 2019"), style = 'font-size:75%'),
         windowTitle = "The Masters Data Viz"
@@ -347,7 +347,7 @@ server <- function(input, output, session) {
                                                               searching = T,
                                                               stripeClasses = F, 
                                                               lengthChange = F,
-                                                              scrollY = '510px',
+                                                              scrollY = '505px',
                                                               scrollCollapse = T),
                                                rownames = F)
         
@@ -366,7 +366,7 @@ server <- function(input, output, session) {
                                                                        stripeClasses = F, 
                                                                        lengthChange = F,
                                                                        orderMulti = T,
-                                                                       scrollY = '435px',
+                                                                       scrollY = '445px',
                                                                        scrollCollapse = T),
                                                         rownames = F) %>%
                                                 { if(input$lb_tbl_choice %in% c('Cuts Made', 'Top 5s', 'Top 10s', 'Top 25s', 'Sub-par Rounds', 'Rounds in the 60s')) { 
