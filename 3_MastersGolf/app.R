@@ -6,6 +6,7 @@ require(shinythemes)
 require(DT)
 require(tidyverse)
 require(ggridges)
+require(gridExtra)
 require(extrafont)
 
 # Load Helper files -------------------------------
@@ -193,6 +194,34 @@ ui <- navbarPage(
                          column(7,
                                 wellPanel(style = "background-color: #fff; border-color: #2c3e50; height: 720px;",
                                           plotOutput("scr_avg", height = 680))))),
+        # Player Pages --------------------------------------------------------
+        tabPanel("Player Pages",
+                 fluidRow(
+                         column(6,
+                                fluidRow(column(12,
+                                                wellPanel(style = "background-color: #fff; border-color: #2c3e50; height: 215px;",
+                                                          fluidRow(style = 'margin-top: 18px',
+                                                                   column(4, style = 'margin-top: 7px', align = 'right', p("Select a player:")),
+                                                                   column(8, align = "left",
+                                                                          selectizeInput(inputId = "plyr_pg_player", label = NULL,
+                                                                                         choices = sort(unique(masters$Player_FullName)),
+                                                                                         selected = sample(c("Arnold Palmer", "Jack Nicklaus", "Tiger Woods", "Jordan Spieth", "Padraig Harrington"), 1),
+                                                                                         multiple = F))),
+                                                          fluidRow(column(12, 
+                                                                          p(tags$b('Career at The Masters:', style = "font-size: 105%; font-family:Helvetica;"), style = 'text-align:left; margin-bottom: 5px;'))),
+                                                          fluidRow(column(5, offset = 1, align = 'center',
+                                                                          htmlOutput('plyr_career_L')),
+                                                                   column(6, align = 'center',
+                                                                          htmlOutput('plyr_career_R')))))),
+                                fluidRow(column(12, 
+                                                wellPanel(style = "background-color: #fff; border-color: #2c3e50; height: 485px;",
+                                                          DTOutput("plyr_pg_tournaments"))))),
+                         column(6,
+                                # Error Message Appearance
+                                tags$head(tags$style(HTML(".shiny-output-error-validation { font-style: italic; font-size: 125%; }"))),
+                                wellPanel(style = "background-color: #fff; border-color: #2c3e50; height: 720px;",
+                                fluidRow(column(12,
+                                                plotOutput("plyr_fig", height = 695))))))),
         # About Tab ------------------------------------------------
         tabPanel("About", icon = icon("bars"),
                  fluidRow(
@@ -298,7 +327,7 @@ server <- function(input, output, session) {
                                         else if(nrow(click_df) >= 1) {
                                                 p(tags$b("Year: ", style = "font-size: 108%; font-family:Helvetica; color:#000000"), tags$em(click_df$Year), br(),
                                                   tags$b("Player: ", style = "font-size: 108%; font-family:Helvetica; color:#000000"), tags$em(click_df$Player_FullName), br(),
-                                                  tags$b("Total Par: ", style = "font-size: 108%; font-family:Helvetica; color:#000000"), tags$em(click_df$Finish_Par), br(),
+                                                  tags$b("Total Par: ", style = "font-size: 108%; font-family:Helvetica; color:#000000"), { if(click_df$Finish_Par > 0) { tags$em(paste0("+", click_df$Finish_Par)) } else if(click_df$Finish_Par == 0) { tags$em("E") } else { tags$em(click_df$Finish_Par) }}, br(),
                                                   tags$b("Finish Position: ", style = "font-size: 108%; font-family:Helvetica; color:#000000"), { if(click_df$Finish == 999) { tags$em("MC") } else { tags$em(click_df$Finish) }}, br(),
                                                   tags$b("Grouping: ", style = "font-size: 115%; font-family:Helvetica; color:#000000"), tags$em(click_df$Finish_Group_6), br(), br(),
                                                   tags$b("Cut: ", style = "font-size: 85%; font-family:Helvetica; color:#000000"), { if(click_df$Year < 1957) { tags$em("No cut") } else { tags$em("+", cutline$Cut[cutline$Year == click_df$Year]) }}) }
@@ -422,6 +451,80 @@ server <- function(input, output, session) {
                                                   rownames = F) %>%
                                                 formatRound(columns = c(3,4), digits = c(2,1)) })
         
+        ### Player Pages Tab -----------------------------------
+        
+        # Error Messages
+        plyr_err_msg1 <- "Waiting for player..."
+        plyr_err_msg2 <- ""
+        
+        # Present the Player's Tournaments Table
+        plyr_trns <- reactive({ player_tournaments(masters,
+                                                   player = input$plyr_pg_player) })
+        
+        output$plyr_pg_tournaments <- renderDT({ datatable(plyr_trns(), 
+                                                  options = list(info = F,
+                                                                 paging = F,
+                                                                 searching = F,
+                                                                 stripeClasses = F, 
+                                                                 lengthChange = F,
+                                                                 scrollY = '360px',
+                                                                 scrollCollapse = T),
+                                                  rownames = F) })
+        # Player career information
+        output$plyr_career_L <- renderPrint({ 
+                
+                validate(need(input$plyr_pg_player, plyr_err_msg2))
+                plyr_career_str_L <- function(score_data, rounds_data) {
+                        
+                        details <- if(nrow(score_data) == 0) {
+                                p(tags$b("Tournaments: ", style = "font-size: 101%; font-family:Helvetica; color:#000000"), br(),
+                                  tags$b("Cuts: ", style = "font-size: 101%; font-family:Helvetica; color:#000000"), br(),
+                                  tags$b("Rounds: ", style = "font-size: 101%; font-family:Helvetica; color:#000000"), br(),
+                                  tags$b("Low Round: ", style = "font-size: 101%; font-family:Helvetica; color:#000000"), br()) }
+                        else if(nrow(score_data) >= 1) {
+                                p(tags$b("Tournaments: ", style = "font-size: 101%; font-family:Helvetica; color:#000000"), tags$em(nrow(score_data)), br(),
+                                  tags$b("Cuts: ", style = "font-size: 101%; font-family:Helvetica; color:#000000"), tags$em(nrow(score_data %>% filter(!Finish_Group_6 %in% c('Missed Cut', 'Withdrew', 'Disqualified')))), br(),
+                                  tags$b("Rounds: ", style = "font-size: 101%; font-family:Helvetica; color:#000000"), tags$em(nrow(rounds_data)), br(),
+                                  tags$b("Low Round: ", style = "font-size: 101%; font-family:Helvetica; color:#000000"), tags$em(min(rounds_data$Score)), br()) }
+                        else { NA }
+                        
+                        return(details)
+                }
+                
+                plyr_career_str_L(score_data = masters %>% filter(Player_FullName == input$plyr_pg_player), 
+                                  rounds_data = low_rounds %>% filter(Player_FullName == input$plyr_pg_player))
+                })
+        
+        output$plyr_career_R <- renderPrint({ 
+                
+                validate(need(input$plyr_pg_player, plyr_err_msg2))
+                plyr_career_str_R <- function(score_data, rounds_data) {
+                        
+                        details <- if(nrow(score_data) == 0) {
+                                p(tags$b("Wins: ", style = "font-size: 101%; font-family:Helvetica; color:#000000"), br(),
+                                  tags$b("Runner-ups: ", style = "font-size: 101%; font-family:Helvetica; color:#000000"), br(),
+                                  tags$b("Top 5s: ", style = "font-size: 101%; font-family:Helvetica; color:#000000"), br(),
+                                  tags$b("Top 10s: ", style = "font-size: 101%; font-family:Helvetica; color:#000000"), br()) }
+                        else if(nrow(score_data) >= 1) {
+                                p(tags$b("Wins: ", style = "font-size: 101%; font-family:Helvetica; color:#000000"), tags$em(nrow(score_data %>% filter(Finish_Group_6 == 'Winner'))), br(),
+                                  tags$b("Runner-ups: ", style = "font-size: 101%; font-family:Helvetica; color:#000000"), tags$em(nrow(score_data %>% filter(Finish == 2))), br(),
+                                  tags$b("Top 5s: ", style = "font-size: 101%; font-family:Helvetica; color:#000000"), tags$em(nrow(score_data %>% filter(Finish <= 5))), br(),
+                                  tags$b("Top 10s: ", style = "font-size: 101%; font-family:Helvetica; color:#000000"), tags$em(nrow(score_data %>% filter(Finish <= 10))), br()) }
+                        else { NA }
+                        
+                        return(details)
+                }
+                
+                plyr_career_str_R(score_data = masters %>% filter(Player_FullName == input$plyr_pg_player), 
+                                  rounds_data = low_rounds %>% filter(Player_FullName == input$plyr_pg_player))
+                
+                })
+        
+        # Plot the Combined Figure
+        output$plyr_fig <- renderPlot({
+                
+                validate(need(input$plyr_pg_player, plyr_err_msg1))
+                fig3and4_plyr(masters, player = input$plyr_pg_player) })
 }
 
 # Run app -------------------------------

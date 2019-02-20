@@ -7,7 +7,7 @@ fig1_par <- function(score_data, cut_data, years, cut_line = T, finish_groups, p
         players <- if(!is.null(player_highlight)) { player_highlight } else { NA }
         player_cols <- c('#b10026', '#225ea8', '#fc6f0a')
         player_cols <- if(!is.null(player_highlight)) { player_cols[1:length(players)] } else { player_cols }
-        names(player_cols) <- sort(players)
+        names(player_cols) <- players
         
         pl_par_df <- score_data %>%
                         mutate(Finish_Group_6 = factor(Finish_Group_6, 
@@ -40,7 +40,6 @@ fig1_par <- function(score_data, cut_data, years, cut_line = T, finish_groups, p
                         arrange(Year, desc(Finish)) 
         
         # Create plot
-        
         cutnote_xval <- case_when(
                 years[1] >= 1934 & years[1] <= 1937 ~ 1945,
                 years[1] >= 1938 & years[1] <= 1942 ~ years[1]+8,
@@ -63,7 +62,8 @@ fig1_par <- function(score_data, cut_data, years, cut_line = T, finish_groups, p
                                                          guide = guide_legend(reverse = TRUE)) } } +
                         { if(cut_line) { geom_line(data = cut_df, aes(x = Year, y = Cut), size = 2, color = "red3", linetype = 'solid') } } +
                         scale_x_continuous(breaks = seq(min(par_df$Year), max(par_df$Year), 1), limits = c(min(par_df$Year)-1, max(par_df$Year)+1), expand = expand_scale(add = 0.5)) +
-                        scale_y_continuous(breaks = seq(-20, 60, 5), limits = c(-20, 60)) +
+                        scale_y_continuous(breaks = seq(-20, 60, 5), limits = c(-20, 60),
+                                           labels = map_chr(seq(-20, 60, 5), ~ if(.x > 0) { paste0("+", .x) } else if(.x == 0) { "E" } else { as.character(.x) } )) +
                         labs(x = 'Year', y = 'Total Score Relative to Par', caption = 'cteeter.ca') +
                         theme_teeter() +
                         theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust = 0.5)) +
@@ -109,8 +109,11 @@ fig2_scrdist <- function(score_data, years, career_rounds, num_players) {
                                 Player_FullName %in% players_to_plot)
         
         # Create Plot
-        scrdist_fig <- ggplot(rounds_df_fig, aes(x = Score, y = reorder(Player_FullName, Career_Avg))) +
-                stat_density_ridges(quantile_lines = T, quantiles = 2, alpha = 0.90, scale = 1.25, size = 1.05, fill = 'deeppink3') +
+        scrdist_fig <- ggplot(rounds_df_fig, aes(x = Score, y = reorder(Player_FullName, Career_Avg), fill = ..x..)) +
+                stat_density_ridges(geom = "density_ridges_gradient", calc_ecdf = T,
+                                    quantile_lines = T, quantiles = 2, alpha = 0.90, scale = 1.25, size = 1.05) +
+                scale_fill_gradient2(limits = c(62, 82), low = "red", mid = "white", high = "springgreen4", 
+                                     midpoint = 72, guide = F) +
                 scale_y_discrete(expand = expand_scale(add = c(1, 1.75))) +
                 scale_x_continuous(breaks = seq(62, 82, 2), limits = c(62, 82)) +
                 labs(x = 'Score', y = "", 
@@ -121,4 +124,80 @@ fig2_scrdist <- function(score_data, years, career_rounds, num_players) {
                 theme_teeter()
         
         return(scrdist_fig)
+}
+
+#### Figure 3 & 4 - Player Page Par by Year
+fig3and4_plyr <- function(score_data, player) {
+        
+        # Filter and Organize primary data frame
+        
+        par_df <- score_data %>%
+                filter(Player_FullName == player,
+                       !is.na(Finish_Par),
+                       !Finish_Group_6 %in% c('Withdrew', 'Disqualified')) %>%
+                mutate(Finish_Group_6 = factor(Finish_Group_6, 
+                                               levels = c('Missed Cut', 'Others', 'Top 10', 'Winner'),
+                                               labels = c('Missed Cut', 'Others', 'Top 10', 'Winner'),
+                                               ordered = T)) %>%
+                arrange(Year, desc(Finish)) 
+        
+        ymin <- min(-5, plyr::round_any(min(par_df$Finish_Par), 5, floor))
+        ymax <- max(5, plyr::round_any(max(par_df$Finish_Par), 5, ceiling))
+        
+        par_fig <- ggplot(par_df) +
+                geom_hline(yintercept = 0, size = 0.5) +
+                geom_point(aes(x = Year, y = Finish_Par, fill = Finish_Group_6, group = 1), size = 4.25, pch = 21, colour = "black", stroke = 1.35) +
+                scale_fill_manual(breaks = c('Winner', 'Top 10', 'Others', 'Missed Cut'), 
+                                  values = c('Winner' = '#076652', 'Top 10' = 'yellow3', 'Others' = 'gray60', 'Missed Cut' = 'gray20'),
+                                  guide = guide_legend(reverse = TRUE)) +
+                scale_x_continuous(breaks = seq(min(par_df$Year), max(par_df$Year), 1), limits = c(min(par_df$Year)-1, max(par_df$Year)+1), expand = expand_scale(add = 0.5)) +
+                scale_y_continuous(breaks = seq(ymin, ymax, 5), limits = c(ymin, ymax),
+                                   labels = map_chr(seq(ymin, ymax, 5), ~ if(.x > 0) { paste0("+", .x) } else if(.x == 0) { "E" } else { as.character(.x) } )) +
+                labs(x = 'Year', y = 'Total Score Relative to Par') +
+                theme_teeter() +
+                theme(axis.text.x = element_text(size = 10, angle = -90, hjust = 0, vjust = 0.5))
+        
+        # Create, Organize and Filter Scoring Averages Data Frame
+        rounds_df <- score_data %>%
+                filter(Player_FullName == player) %>%
+                select(Year, Player_FullName, R1, R2, R3, R4) %>%
+                gather(Round, Score, -Year, -Player_FullName) %>%
+                filter(!is.na(Score)) %>%
+                arrange(Year, Player_FullName)
+        
+        plyr_stats <- rounds_df %>%
+                filter(!is.na(Score)) %>% 
+                summarise(Career_Rds = n(), 
+                          Career_Avg = round(mean(Score, na.rm = T), 2),
+                          Career_Median = round(median(Score, na.rm = T),2))
+        
+        xmin <- min(60, plyr::round_any(min(rounds_df$Score), 2, floor))
+        xmax <- max(82, plyr::round_any(max(rounds_df$Score), 2, ceiling))
+        
+        # Create Plot
+        scrdist_fig <- ggplot(rounds_df, aes(x = Score, y = Player_FullName, fill = ..x..)) +
+                stat_density_ridges(geom = "density_ridges_gradient", calc_ecdf = T,
+                                    quantile_lines = T, quantiles = 2, alpha = 0.90, scale = 5, size = 1.05) +
+                scale_fill_gradient2(limits = c(xmin, xmax), low = "red", mid = "white", high = "springgreen4", 
+                                     midpoint = 72, guide = F) +
+                scale_y_discrete(expand = expand_scale(add = c(0.1, 0.85))) +
+                scale_x_continuous(breaks = seq(xmin, xmax, 2), limits = c(xmin, xmax)) +
+                labs(x = 'Score', y = "", 
+                     #title = "Career Scoring Distribution",
+                     caption = 'cteeter.ca') +
+                theme_teeter() +
+                theme(axis.text.y = element_blank(),
+                      axis.ticks.y = element_blank())
+        
+        scrdist_fig <- scrdist_fig +
+                annotate("text", x = xmax, y = 1.80, 
+                         label = paste0("Average Score: ", plyr_stats$Career_Avg), 
+                         hjust = 1, vjust = 0.5, size = 4, fontface = 'italic') +
+                annotate("text", x = xmax, y = 1.75, 
+                         label = paste0("Median Score: ", plyr_stats$Career_Median), 
+                         hjust = 1, vjust = 0.5, size = 4, fontface = 'italic')
+        
+        final_fig <- grid.arrange(par_fig, scrdist_fig)
+        
+        return(final_fig)
 }

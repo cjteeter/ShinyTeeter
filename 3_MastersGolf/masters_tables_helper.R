@@ -195,3 +195,18 @@ scoring_leaderboard <- function(score_data, years, career_rounds) {
         
         return(tbl_oi)
 }
+
+#### Table Set 4 - Player Page Tournaments
+player_tournaments <- function(score_data, player) {
+        
+        header <- c("Year" = "Year", "R1" = "R1", "R2" = "R2", "R3" = "R3", "R4" = "R4", "Score" = "Total_Score", 
+                    "Par" = "Finish_Par", "Pos" = "Finish_upd", "Group" = "Finish_Group_6")
+        tbl_oi <- score_data %>%
+                        filter(Player_FullName == player) %>%
+                        mutate(Finish_upd = map_dbl(Finish, ~ if(.x >= 997) { NA } else { .x })) %>%
+                        arrange(Year) %>%
+                        select(Year, R1, R2, R3, R4, Total_Score, Finish_Par, Finish_upd, Finish_Group_6) %>%
+                rename(!!header)
+        
+        return(tbl_oi)
+}
