@@ -179,7 +179,7 @@ yearly_leaderboard <- function(score_data, year) {
 scoring_leaderboard <- function(score_data, years, career_rounds) {
         
         header <- c("Player" = "Player_FullName", "Rounds Played" = "Career_Rds", 
-                    "Average Score" = "Career_Avg", "Median Score" = "Career_Median")
+                    "Median Score" = "Career_Median", "Average Score" = "Career_Avg")
         tbl_oi <- score_data %>%
                         filter(between(Year, years[1], years[2])) %>%
                         select(Year, Player_FullName, R1, R2, R3, R4) %>%
@@ -187,10 +187,10 @@ scoring_leaderboard <- function(score_data, years, career_rounds) {
                         filter(!is.na(Score)) %>%
                         group_by(Player_FullName) %>% 
                         summarise(Career_Rds = n(), 
-                                  Career_Avg = round(mean(Score, na.rm = T), 2),
-                                  Career_Median = round(median(Score, na.rm = T),2)) %>%
+                                  Career_Median = round(median(Score, na.rm = T),2),
+                                  Career_Avg = round(mean(Score, na.rm = T), 2)) %>%
                         filter(Career_Rds >= career_rounds) %>%
-                        arrange(Career_Avg) %>%
+                        arrange(Career_Median, Career_Avg) %>%
                         rename(!!header)
         
         return(tbl_oi)

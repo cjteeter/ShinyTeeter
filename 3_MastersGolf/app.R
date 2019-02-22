@@ -76,6 +76,7 @@ ui <- navbarPage(
                                                                   choices = sort(unique(masters$Player_FullName)),
                                                                   multiple = T,
                                                                   options = list(placeholder = "All",
+                                                                                 maxOptions = 1500,
                                                                                  maxItems = 3,
                                                                                  onInitialize = I('function() { this.setValue("Select player(s)"); }'))),
                                                    br(),
@@ -199,14 +200,16 @@ ui <- navbarPage(
                  fluidRow(
                          column(6,
                                 fluidRow(column(12,
-                                                wellPanel(style = "background-color: #fff; border-color: #2c3e50; height: 215px;",
+                                                wellPanel(style = "background-color: #fff; border-color: #2c3e50; height: 220px;",
                                                           fluidRow(style = 'margin-top: 18px',
                                                                    column(4, style = 'margin-top: 7px', align = 'right', p("Select a player:")),
                                                                    column(8, align = "left",
                                                                           selectizeInput(inputId = "plyr_pg_player", label = NULL,
                                                                                          choices = sort(unique(masters$Player_FullName)),
-                                                                                         selected = sample(c("Arnold Palmer", "Jack Nicklaus", "Tiger Woods", "Jordan Spieth", "Padraig Harrington"), 1),
-                                                                                         multiple = F))),
+                                                                                         selected = sample(c("Arnold Palmer", "Jack Nicklaus", "Tiger Woods", "Jordan Spieth", "Padraig Harrington",
+                                                                                                             "Payne Stewart", "Greg Norman", "Fred Couples", "Rory McIlroy", "Rickie Fowler"), 1),
+                                                                                         multiple = F,
+                                                                                         options = list(maxOptions = 1500)))),
                                                           fluidRow(column(12, 
                                                                           p(tags$b('Career at The Masters:', style = "font-size: 105%; font-family:Helvetica;"), style = 'text-align:left; margin-bottom: 5px;'))),
                                                           fluidRow(column(5, offset = 1, align = 'center',
@@ -214,7 +217,7 @@ ui <- navbarPage(
                                                                    column(6, align = 'center',
                                                                           htmlOutput('plyr_career_R')))))),
                                 fluidRow(column(12, 
-                                                wellPanel(style = "background-color: #fff; border-color: #2c3e50; height: 485px;",
+                                                wellPanel(style = "background-color: #fff; border-color: #2c3e50; height: 480px;",
                                                           DTOutput("plyr_pg_tournaments"))))),
                          column(6,
                                 # Error Message Appearance
@@ -449,7 +452,7 @@ server <- function(input, output, session) {
                                                               scrollY = '360px',
                                                               scrollCollapse = T),
                                                   rownames = F) %>%
-                                                formatRound(columns = c(3,4), digits = c(2,1)) })
+                                                formatRound(columns = c(3,4), digits = c(1,2)) })
         
         ### Player Pages Tab -----------------------------------
         

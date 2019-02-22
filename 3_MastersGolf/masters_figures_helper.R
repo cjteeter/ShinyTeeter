@@ -90,26 +90,27 @@ fig2_scrdist <- function(score_data, years, career_rounds, num_players) {
                                                           Career_Median = round(median(Score, na.rm = T),2)),
                                   by = 'Player_FullName')
         
-        # Pull a list of the Top-n players (based on Career Average score)
+        # Generate list of the Top-n players (based on Career Average score) and Add Rank for Plotting
         players_to_plot <- rounds_df %>% 
                                 filter(!is.na(Score),
                                        between(Year, years[1], years[2]),
                                        Career_Rds >= career_rounds) %>% 
-                                select(Player_FullName, Career_Avg) %>% 
-                                distinct(Player_FullName, Career_Avg) %>% 
-                                arrange(Career_Avg) %>%
-                                top_n(-num_players) %>%
-                                pull(Player_FullName)
+                                select(Player_FullName, Career_Median, Career_Avg) %>% 
+                                distinct(Player_FullName, .keep_all = T) %>% 
+                                arrange(Career_Median, Career_Avg) %>%
+                                slice(1:num_players) %>%
+                                mutate(Rank = row_number())
         
         # Filter Primary Data Frame to only include players on the players_to_plot list
         rounds_df_fig <- rounds_df %>% 
                                 filter(!is.na(Score),
                                 between(Year, years[1], years[2]),
                                 Career_Rds >= career_rounds,
-                                Player_FullName %in% players_to_plot)
+                                Player_FullName %in% (players_to_plot %>% pull(Player_FullName))) %>%
+                        left_join(players_to_plot %>% select(Player_FullName, Rank), by = "Player_FullName")
         
         # Create Plot
-        scrdist_fig <- ggplot(rounds_df_fig, aes(x = Score, y = reorder(Player_FullName, Career_Avg), fill = ..x..)) +
+        scrdist_fig <- ggplot(rounds_df_fig, aes(x = Score, y = reorder(Player_FullName, Rank), fill = ..x..)) +
                 stat_density_ridges(geom = "density_ridges_gradient", calc_ecdf = T,
                                     quantile_lines = T, quantiles = 2, alpha = 0.90, scale = 1.25, size = 1.05) +
                 scale_fill_gradient2(limits = c(62, 82), low = "red", mid = "white", high = "springgreen4", 
@@ -117,7 +118,7 @@ fig2_scrdist <- function(score_data, years, career_rounds, num_players) {
                 scale_y_discrete(expand = expand_scale(add = c(1, 1.75))) +
                 scale_x_continuous(breaks = seq(62, 82, 2), limits = c(62, 82)) +
                 labs(x = 'Score', y = "", 
-                     title = paste(num_players, "Lowest Career Scoring Averages"), 
+                     title = paste(num_players, "Lowest Career Scorers"), 
                      subtitle = paste0("Among players with at least ", career_rounds, " rounds played between ", years[1],
                                       " and ", years[2], ".\n"),
                      caption = 'cteeter.ca') +
@@ -180,7 +181,7 @@ fig3and4_plyr <- function(score_data, player) {
                                     quantile_lines = T, quantiles = 2, alpha = 0.90, scale = 5, size = 1.05) +
                 scale_fill_gradient2(limits = c(xmin, xmax), low = "red", mid = "white", high = "springgreen4", 
                                      midpoint = 72, guide = F) +
-                scale_y_discrete(expand = expand_scale(add = c(0.1, 0.85))) +
+                scale_y_discrete(expand = expand_scale(add = c(0.1, 1.05))) +
                 scale_x_continuous(breaks = seq(xmin, xmax, 2), limits = c(xmin, xmax)) +
                 labs(x = 'Score', y = "", 
                      #title = "Career Scoring Distribution",
@@ -190,12 +191,12 @@ fig3and4_plyr <- function(score_data, player) {
                       axis.ticks.y = element_blank())
         
         scrdist_fig <- scrdist_fig +
-                annotate("text", x = xmax, y = 1.80, 
-                         label = paste0("Average Score: ", plyr_stats$Career_Avg), 
-                         hjust = 1, vjust = 0.5, size = 4, fontface = 'italic') +
-                annotate("text", x = xmax, y = 1.75, 
-                         label = paste0("Median Score: ", plyr_stats$Career_Median), 
-                         hjust = 1, vjust = 0.5, size = 4, fontface = 'italic')
+                        annotate("text", x = xmax, y = 1.95, 
+                                 label = paste0("Median Score: ", plyr_stats$Career_Median), 
+                                 hjust = 1, vjust = 0.5, size = 4, fontface = 'italic') +
+                        annotate("text", x = xmax, y = 1.90, 
+                                 label = paste0("Average Score: ", plyr_stats$Career_Avg), 
+                                 hjust = 1, vjust = 0.5, size = 4, fontface = 'italic')
         
         final_fig <- grid.arrange(par_fig, scrdist_fig)
         
