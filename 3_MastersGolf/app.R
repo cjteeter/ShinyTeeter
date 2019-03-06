@@ -23,7 +23,8 @@ low_rounds <- read.csv('data/CT_Masters_lowrounds_1934-2018.csv', stringsAsFacto
 ui <- navbarPage(
         #theme = shinytheme('flatly'),
         theme = "flatlyST_bootstrap_CTedit.css",
-        inverse = F,
+        inverse = F, 
+        id = "masters_golf",
         # App Title
         tags$div(tags$img(src='masters_logo_3.png', width = 108, height = 108, style="float:left; margin-left: 5px; margin-right: 5px; margin-top: -15px")), 
         
@@ -233,11 +234,18 @@ ui <- navbarPage(
                                           includeHTML("about_masters.html"))))),
         # Footer -------------------------------
         hr(style = "border-color: #cbcbcb;"),
-        p('All of the data used to generate this app were obtained from ', tags$a(href = "http://www.masters.com/en_US/tournament/index.html", 'Masters.com', target = '_blank'), '.', style = "font-size: 85%"),
-        p("App created by ", tags$a(href = "https://www.cteeter.ca", 'Chris Teeter', target = '_blank'), " in January 2019", HTML("&bull;"),
-          "Find the code on Github:", tags$a(href = "https://github.com/cjteeter/ShinyTeeter/tree/master/3_MastersGolf", tags$i(class = 'fa fa-github', style = 'color:#5000a5'), target = '_blank'), style = "font-size: 85%"),
-        p("Have a question? Spot an error? Send an email ", tags$a(href = "mailto:christopher.teeter@gmail.com", tags$i(class = 'fa fa-envelope', style = 'color:#990000'), target = '_blank'), style = "font-size: 85%"),
-        p(tags$em("Last updated: February 2019"), style = 'font-size:75%'),
+        fluidRow(
+                column(9,
+                       p('All of the data used to generate this app were obtained from ', tags$a(href = "http://www.masters.com/en_US/tournament/index.html", 'Masters.com', target = '_blank'), '.', style = "font-size: 85%"),
+                       p("App created by ", tags$a(href = "https://www.cteeter.ca", 'Chris Teeter', target = '_blank'), " in January 2019", HTML("&bull;"),
+                         "Find the code on Github:", tags$a(href = "https://github.com/cjteeter/ShinyTeeter/tree/master/3_MastersGolf", tags$i(class = 'fa fa-github', style = 'color:#5000a5'), target = '_blank'), style = "font-size: 85%"),
+                       p("Have a question? Spot an error? Send an email ", tags$a(href = "mailto:christopher.teeter@gmail.com", tags$i(class = 'fa fa-envelope', style = 'color:#990000'), target = '_blank'), style = "font-size: 85%"),
+                       p(tags$em("Last updated: March 2019"), style = 'font-size:75%')),
+                column(3, align = "right",
+                       conditionalPanel(
+                               condition = "input.masters_golf == 'Scoring Averages' | input.masters_golf == 'Player Pages'",
+                               p(tags$em('Check the box below to change the colour scheme of the distributions to one that is more easily read by those with color blindness.', style = "font-size: 70%; font-family:Helvetica")),
+                               checkboxInput("col_blind", label = "Colourblind?", value = F)))),
         windowTitle = "The Masters Data Viz"
 )
 
@@ -431,12 +439,13 @@ server <- function(input, output, session) {
         # Plot the Scoring Averages Ridges Figure
         output$scr_avg <- renderPlot({ 
                 
-                #validate(need(nrow(masters_update() %>% filter(Finish_Group_6 %in% c(input$par_groups_L, input$par_groups_R))) != 0, err_msg1))
+                #validate(need(nrow(masters_update() %>% filter(Finish_Group_6 %in% c(input$par_groups_L, input$par_groups_R))) != 0, scr_err_msg1))
                 
                 fig2_scrdist(masters, 
                              years = c(as.numeric(input$scr_years_start), as.numeric(input$scr_years_end)),
                              career_rounds = as.numeric(input$scr_min_rds),
-                             num_players = as.numeric(input$scr_num_plyrs)) })
+                             num_players = as.numeric(input$scr_num_plyrs),
+                             col_blind = input$col_blind) })
         
         # Present the Scoring Averages Leaderboard Table
         tbl_lb_scoring <- reactive({ scoring_leaderboard(masters,
@@ -527,7 +536,9 @@ server <- function(input, output, session) {
         output$plyr_fig <- renderPlot({
                 
                 validate(need(input$plyr_pg_player, plyr_err_msg1))
-                fig3and4_plyr(masters, player = input$plyr_pg_player) })
+                fig3and4_plyr(masters, 
+                              player = input$plyr_pg_player,
+                              col_blind = input$col_blind) })
 }
 
 # Run app -------------------------------

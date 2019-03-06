@@ -75,7 +75,7 @@ fig1_par <- function(score_data, cut_data, years, cut_line = T, finish_groups, p
 }
 
 #### Figure 2 - Scoring Distributions
-fig2_scrdist <- function(score_data, years, career_rounds, num_players) {
+fig2_scrdist <- function(score_data, years, career_rounds, num_players, col_blind) {
         
         # Create, Organize and Filter Scoring Averages Data Frame
         rounds_df <- score_data %>%
@@ -113,7 +113,10 @@ fig2_scrdist <- function(score_data, years, career_rounds, num_players) {
         scrdist_fig <- ggplot(rounds_df_fig, aes(x = Score, y = reorder(Player_FullName, Rank), fill = ..x..)) +
                 stat_density_ridges(geom = "density_ridges_gradient", calc_ecdf = T,
                                     quantile_lines = T, quantiles = 2, alpha = 0.90, scale = 1.25, size = 1.05) +
-                scale_fill_gradient2(limits = c(62, 82), low = "red", mid = "white", high = "springgreen4", 
+                scale_fill_gradient2(limits = c(62, 82), 
+                                     low = ifelse(col_blind, "#d8b365", "red"), 
+                                     mid = "white", 
+                                     high = ifelse(col_blind, "#5ab4ac", "springgreen4"), 
                                      midpoint = 72, guide = F) +
                 scale_y_discrete(expand = expand_scale(add = c(1, 1.75))) +
                 scale_x_continuous(breaks = seq(62, 82, 2), limits = c(62, 82)) +
@@ -128,7 +131,7 @@ fig2_scrdist <- function(score_data, years, career_rounds, num_players) {
 }
 
 #### Figure 3 & 4 - Player Page Par by Year
-fig3and4_plyr <- function(score_data, player) {
+fig3and4_plyr <- function(score_data, player, col_blind) {
         
         # Filter and Organize primary data frame
         
@@ -179,7 +182,10 @@ fig3and4_plyr <- function(score_data, player) {
         scrdist_fig <- ggplot(rounds_df, aes(x = Score, y = Player_FullName, fill = ..x..)) +
                 stat_density_ridges(geom = "density_ridges_gradient", calc_ecdf = T,
                                     quantile_lines = T, quantiles = 2, alpha = 0.90, scale = 5, size = 1.05) +
-                scale_fill_gradient2(limits = c(xmin, xmax), low = "red", mid = "white", high = "springgreen4", 
+                scale_fill_gradient2(limits = c(xmin, xmax), 
+                                     low = ifelse(col_blind, "#d8b365", "red"), 
+                                     mid = "white", 
+                                     high = ifelse(col_blind, "#5ab4ac", "springgreen4"),
                                      midpoint = 72, guide = F) +
                 scale_y_discrete(expand = expand_scale(add = c(0.1, 1.05))) +
                 scale_x_continuous(breaks = seq(xmin, xmax, 2), limits = c(xmin, xmax)) +
