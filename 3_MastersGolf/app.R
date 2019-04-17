@@ -15,9 +15,12 @@ source("masters_tables_helper.R")
 source("teeter_ggplot-theme.R")
 
 # Load data -------------------------------
-masters <- read.csv('data/CT_Masters_playerscores_1934-2018.csv', stringsAsFactors = F)
-cutline <- read.csv('data/CT_Masters_cutline_1934-2018.csv', stringsAsFactors = F)
-low_rounds <- read.csv('data/CT_Masters_lowrounds_1934-2018.csv', stringsAsFactors = F)
+masters <- read.csv('data/CT_Masters_playerscores_1934-2019.csv', stringsAsFactors = F)
+cutline <- read.csv('data/CT_Masters_cutline_1934-2019.csv', stringsAsFactors = F)
+low_rounds <- read.csv('data/CT_Masters_lowrounds_1934-2019.csv', stringsAsFactors = F)
+
+# Create Variables --------------------------------------------------------
+latest_trn <- 2019
 
 # Create user interface -------------------------------
 ui <- navbarPage(
@@ -48,14 +51,14 @@ ui <- navbarPage(
                                                    fluidRow(column(5, align = 'center',
                                                                    selectInput(inputId = 'par_years_start',
                                                                                label = NULL,
-                                                                               choices = seq(1934, 2018, 1), 
+                                                                               choices = seq(1934, latest_trn, 1), 
                                                                                selected = 1934)),
                                                             column(2, style = 'margin-top: 7px', align = 'center', p("to")),
                                                             column(5, align = 'center',
                                                                    selectInput(inputId = 'par_years_end',
                                                                                label = NULL,
-                                                                               choices = seq(1934, 2018, 1), 
-                                                                               selected = 2018))),
+                                                                               choices = seq(1934, latest_trn, 1), 
+                                                                               selected = latest_trn))),
                                                    p(tags$b("Groupings to plot:", style = "font-size: 102%")),
                                                    fluidRow(style = "margin-top: -5px;",
                                                            column(5, offset = 1, align = 'left',
@@ -97,7 +100,7 @@ ui <- navbarPage(
                                                           selectInput(inputId = 'lb_yearly_year',
                                                                       label = NULL,
                                                                       choices = sort(unique(masters$Year), decreasing = T), 
-                                                                      selected = 2018))),
+                                                                      selected = latest_trn))),
                                           DTOutput("lb_yearly_table"))),
                          column(7,
                                 wellPanel(style = "background-color: #fff; border-color: #2c3e50; height: 775px;",
@@ -108,14 +111,14 @@ ui <- navbarPage(
                                                    column(2, align = 'left',
                                                           selectInput(inputId = 'lb_tbl_yr_start',
                                                                       label = NULL,
-                                                                      choices = seq(1934, 2018, 1), 
+                                                                      choices = seq(1934, latest_trn, 1), 
                                                                       selected = 1934)),
                                                    column(1, style = 'margin-top: 7px;', align = 'center', p("to")),
                                                    column(2, align = 'left',
                                                           selectInput(inputId = 'lb_tbl_yr_end',
                                                                       label = NULL,
-                                                                      choices = seq(1934, 2018, 1), 
-                                                                      selected = 2018))),
+                                                                      choices = seq(1934, latest_trn, 1), 
+                                                                      selected = latest_trn))),
                                           hr(),
                                           fluidRow(column(5,
                                                           selectizeInput(inputId = "lb_tbl_choice", 
@@ -161,14 +164,14 @@ ui <- navbarPage(
                                                                   column(3, align = 'center',
                                                                           selectInput(inputId = 'scr_years_start',
                                                                                       label = NULL,
-                                                                                      choices = seq(1934, 2018, 1), 
+                                                                                      choices = seq(1934, latest_trn, 1), 
                                                                                       selected = 1934)),
                                                                    column(1, style = 'margin-top: 7px', align = 'center', p("to")),
                                                                    column(3, align = 'center',
                                                                           selectInput(inputId = 'scr_years_end',
                                                                                       label = NULL,
-                                                                                      choices = seq(1934, 2018, 1), 
-                                                                                      selected = 2018))),
+                                                                                      choices = seq(1934, latest_trn, 1), 
+                                                                                      selected = latest_trn))),
                                                           fluidRow(
                                                                    column(4, style = 'margin-top: 15px', align = 'right', p("Min. rounds played:")),
                                                                    column(7, align = 'left',
@@ -240,7 +243,7 @@ ui <- navbarPage(
                        p("App created by ", tags$a(href = "https://www.cteeter.ca", 'Chris Teeter', target = '_blank'), " in January 2019", HTML("&bull;"),
                          "Find the code on Github:", tags$a(href = "https://github.com/cjteeter/ShinyTeeter/tree/master/3_MastersGolf", tags$i(class = 'fa fa-github', style = 'color:#5000a5'), target = '_blank'), style = "font-size: 85%"),
                        p("Have a question? Spot an error? Send an email ", tags$a(href = "mailto:christopher.teeter@gmail.com", tags$i(class = 'fa fa-envelope', style = 'color:#990000'), target = '_blank'), style = "font-size: 85%"),
-                       p(tags$em("Last updated: March 2019"), style = 'font-size:75%')),
+                       p(tags$em("Last updated: April 2019"), style = 'font-size:75%')),
                 column(3, align = "right",
                        conditionalPanel(
                                condition = "input.masters_golf == 'Scoring Averages' | input.masters_golf == 'Player Pages'",
@@ -278,7 +281,7 @@ server <- function(input, output, session) {
         # If Reset button pressed, reset all filters to initial settings
         observeEvent(input$par_reset, {
                         updateSelectInput(session, "par_years_start", selected = 1934)
-                        updateSelectInput(session, "par_years_end", selected = 2018)
+                        updateSelectInput(session, "par_years_end", selected = latest_trn)
                         updateCheckboxGroupInput(session, "par_groups_L", selected = c("Winner", "Others"))
                         updateCheckboxGroupInput(session, "par_groups_R", selected = c("Top 10", "Missed Cut"))
                         updateCheckboxInput(session, "par_cutline", value = F)
@@ -294,7 +297,7 @@ server <- function(input, output, session) {
         
         # Update the year filters
         observeEvent(input$par_years_start, { updateSelectInput(session, "par_years_end", label = NULL, 
-                                                                choices = seq(ifelse(input$par_years_start == 2018, 2018, as.numeric(input$par_years_start)), 2018, 1),
+                                                                choices = seq(ifelse(input$par_years_start == latest_trn, latest_trn, as.numeric(input$par_years_start)), latest_trn, 1),
                                                                 selected = input$par_years_end) })
         observeEvent(input$par_years_end, { updateSelectInput(session, "par_years_start", label = NULL, 
                                                                 choices = seq(1934, ifelse(input$par_years_end == 1934, 1934, as.numeric(input$par_years_end)), 1),
@@ -365,13 +368,13 @@ server <- function(input, output, session) {
         # If Reset button pressed, reset all filters to initial settings
         observeEvent(input$tbl_reset, {
                 updateSelectInput(session, "lb_tbl_yr_start", selected = 1934)
-                updateSelectInput(session, "lb_tbl_yr_end", selected = 2018)
+                updateSelectInput(session, "lb_tbl_yr_end", selected = latest_trn)
                 updateNumericInput(session, "min_trns", value = 1)
                 updateNumericInput(session, "min_rds", value = 1) })
         
         # Update the year filters
         observeEvent(input$lb_tbl_yr_start, { updateSelectInput(session, "lb_tbl_yr_end", label = NULL, 
-                                                                choices = seq(ifelse(input$lb_tbl_yr_start == 2018, 2018, as.numeric(input$lb_tbl_yr_start)), 2018, 1),
+                                                                choices = seq(ifelse(input$lb_tbl_yr_start == latest_trn, latest_trn, as.numeric(input$lb_tbl_yr_start)), latest_trn, 1),
                                                                 selected = input$lb_tbl_yr_end) })
         observeEvent(input$lb_tbl_yr_end, { updateSelectInput(session, "lb_tbl_yr_start", label = NULL, 
                                                                 choices = seq(1934, ifelse(input$lb_tbl_yr_end == 1934, 1934, as.numeric(input$lb_tbl_yr_end)), 1),
@@ -417,7 +420,7 @@ server <- function(input, output, session) {
         # If Reset button pressed, reset all filters to initial settings
         observeEvent(input$scr_reset, {
                 updateSelectInput(session, "scr_years_start", selected = 1934)
-                updateSelectInput(session, "scr_years_end", selected = 2018)
+                updateSelectInput(session, "scr_years_end", selected = latest_trn)
                 updateSliderInput(session, "scr_min_rds", value = 20)
                 updateRadioButtons(session, "scr_num_plyrs", selected = 10) })
         
@@ -430,7 +433,7 @@ server <- function(input, output, session) {
         
         # Update the year filters
         observeEvent(input$scr_years_start, { updateSelectInput(session, "scr_years_end", label = NULL, 
-                                                                choices = seq(ifelse(input$scr_years_start == 2018, 2018, as.numeric(input$scr_years_start)), 2018, 1),
+                                                                choices = seq(ifelse(input$scr_years_start == latest_trn, latest_trn, as.numeric(input$scr_years_start)), latest_trn, 1),
                                                                 selected = input$scr_years_end) })
         observeEvent(input$scr_years_end, { updateSelectInput(session, "scr_years_start", label = NULL, 
                                                               choices = seq(1934, ifelse(input$scr_years_end == 1934, 1934, as.numeric(input$scr_years_end)), 1),

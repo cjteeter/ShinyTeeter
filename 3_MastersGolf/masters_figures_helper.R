@@ -66,7 +66,7 @@ fig1_par <- function(score_data, cut_data, years, cut_line = T, finish_groups, p
                                            labels = map_chr(seq(-20, 60, 5), ~ if(.x > 0) { paste0("+", .x) } else if(.x == 0) { "E" } else { as.character(.x) } )) +
                         labs(x = 'Year', y = 'Total Score Relative to Par', caption = 'cteeter.ca') +
                         theme_teeter() +
-                        theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust = 0.5)) +
+                        theme(axis.text.x = element_text(size = 10, angle = -90, hjust = 0, vjust = 0.5)) +
                         { if(years[1] <= 1943) { annotate("rect", xmin = 1943, xmax = 1945, ymin = -5, ymax = 5, fill = 'white') } } +
                         { if(years[1] <= 1943) { annotate("text", x = 1944, y = -15, label = "[ Tournament not held from 1943 - 1945, due to World War II ]", angle = 90, hjust = 0, vjust = 0.35) } } +
                         { if(cut_line & years[1] <= 1956) { annotate("text", x = cutnote_xval, y = 55, label = "{ No 36-hole cut from 1934 - 1956 }", hjust = 0.5, vjust = 0.5, color = "red3", fontface = "bold") } }
