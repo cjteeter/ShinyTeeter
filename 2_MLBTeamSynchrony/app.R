@@ -14,12 +14,12 @@ source("datatables_gen.R")
 
 # Load data -------------------------------
 teams_df <- read.csv("data/MLB_teamCodes.csv", stringsAsFactors = F)
-master_data <- read.csv(curl(sprintf("https://docs.google.com/uc?id=%s&export=download", "1w8tuZiAZArBLJKx1ZSSTsD5pObCNPbZA")), stringsAsFactors = F, na.strings = "") %>%
+master_data <- read.csv(curl(sprintf("https://docs.google.com/uc?id=%s&export=download", "1z0kyo87FzMeW0-B6urITWHAgEWhelbBZ")), stringsAsFactors = F, na.strings = "") %>%
                 left_join(teams_df, by = c('Tm' = 'Team.Code')) %>%
                 select(Year, Full.Name, everything())
 
 # Set some variable values -------------------------------
-curSeason <- 2018
+curSeason <- 2019
 minGames <- min(master_data %>% filter(Year == curSeason) %>% group_by(Tm) %>% summarise(Games = max(as.numeric(Gm_num))) %>% pull(Games), na.rm = T)
 sl_max <- ifelse(minGames <= 50, minGames - 1, 50)
 
@@ -178,7 +178,7 @@ server <- function(input, output, session) {
         
         # Dynamically render the slider
         output$rolling_choice_slider <- renderUI({
-                if(sl_max < 50) {
+                if(!is.null(values$season) && values$season == 2019 && sl_max < 50) {
                         fluidRow(column(12,
                                         # Remove the minor ticks on the slider
                                         tags$style(type = "text/css", ".irs-grid-pol.small {height: 0px;}"),
