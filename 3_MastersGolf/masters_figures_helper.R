@@ -119,7 +119,7 @@ fig2_scrdist <- function(score_data, years, career_rounds, num_players, col_blin
                                      high = ifelse(col_blind, "#5ab4ac", "springgreen4"), 
                                      midpoint = 72, guide = F) +
                 scale_y_discrete(expand = expand_scale(add = c(1, 1.75))) +
-                scale_x_continuous(breaks = seq(62, 82, 2), limits = c(62, 82)) +
+                scale_x_continuous(breaks = seq(62, 82, 2), limits = c(62, 82), oob = rescale_none) +
                 labs(x = 'Score', y = "", 
                      title = paste(num_players, "Lowest Career Scorers"), 
                      subtitle = paste0("Among players with at least ", career_rounds, " rounds played between ", years[1],
@@ -188,7 +188,7 @@ fig3and4_plyr <- function(score_data, player, col_blind) {
                                      high = ifelse(col_blind, "#5ab4ac", "springgreen4"),
                                      midpoint = 72, guide = F) +
                 scale_y_discrete(expand = expand_scale(add = c(0.1, 1.05))) +
-                scale_x_continuous(breaks = seq(xmin, xmax, 2), limits = c(xmin, xmax)) +
+                scale_x_continuous(breaks = seq(xmin, xmax, 2), limits = c(xmin, xmax), oob = rescale_none) +
                 labs(x = 'Score', y = "", 
                      #title = "Career Scoring Distribution",
                      caption = 'cteeter.ca') +
