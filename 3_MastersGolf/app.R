@@ -132,7 +132,7 @@ ui <- navbarPage(
                                                    conditionalPanel(condition = "input.lb_tbl_choice == 'Tournaments Entered' || input.lb_tbl_choice == 'Cuts Made' || input.lb_tbl_choice == 'Top 5s' || input.lb_tbl_choice == 'Top 10s' || input.lb_tbl_choice == 'Top 25s'",
                                                                     column(4, style = 'margin-top: 7px;', align = 'right', p("Minimum tournaments entered:")),
                                                                     column(2, align = 'center',
-                                                                           tags$style(HTML('#min_trns{height: 30px}')),
+                                                                           tags$style(HTML('#min_trns{height: 35px}')),
                                                                            numericInput(inputId = "min_trns", 
                                                                                         label = NULL, 
                                                                                         value = 1,
