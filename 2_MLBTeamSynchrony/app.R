@@ -14,7 +14,7 @@ source("datatables_gen.R")
 
 # Load data -------------------------------
 teams_df <- read.csv("data/MLB_teamCodes.csv", stringsAsFactors = F)
-master_data <- read.csv(curl(sprintf("https://docs.google.com/uc?id=%s&export=download", "1z0kyo87FzMeW0-B6urITWHAgEWhelbBZ")), stringsAsFactors = F, na.strings = "") %>%
+master_data <- read.csv(curl(sprintf("https://docs.google.com/uc?id=%s&export=download", "11Z5Ze_Xh-nDZBiIZERFCv3d93-ExS_kD")), stringsAsFactors = F, na.strings = "") %>%
                 left_join(teams_df, by = c('Tm' = 'Team.Code')) %>%
                 select(Year, Full.Name, everything())
 
