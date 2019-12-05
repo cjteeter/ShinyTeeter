@@ -40,15 +40,11 @@ fig1_par <- function(score_data, cut_data, years, cut_line = T, finish_groups, p
                         arrange(Year, desc(Finish)) 
         
         # Create plot
-        cutnote_xval <- case_when(
-                years[1] >= 1934 & years[1] <= 1937 ~ 1945,
-                years[1] >= 1938 & years[1] <= 1942 ~ years[1]+8,
-                years[1] == 1943 ~ years[1]+10,
-                years[1] == 1944 ~ years[1]+8,
-                years[1] == 1945 ~ years[1]+7,
-                years[1] >= 1946 & years[1] <= 1956 ~ years[1]+6,
-                TRUE ~ NA_real_
-        )
+        x_text_size <- case_when(
+                        (years[2] - years[1]) >= 76 ~ 10,
+                        (years[2] - years[1]) >= 46 & (years[2] - years[1]) < 76 ~ 12,
+                        (years[2] - years[1]) < 46 ~ 14,
+                        TRUE ~ NA_real_)
         
         par_fig <- ggplot(par_df) +
                         geom_hline(yintercept = 0, size = 0.5) +
@@ -66,10 +62,10 @@ fig1_par <- function(score_data, cut_data, years, cut_line = T, finish_groups, p
                                            labels = map_chr(seq(-20, 60, 5), ~ if(.x > 0) { paste0("+", .x) } else if(.x == 0) { "E" } else { as.character(.x) } )) +
                         labs(x = 'Year', y = 'Total Score Relative to Par', caption = 'cteeter.ca') +
                         theme_teeter() +
-                        theme(axis.text.x = element_text(size = 10, angle = -90, hjust = 0, vjust = 0.5)) +
+                        theme(axis.text.x = element_text(size = x_text_size, angle = -90, hjust = 0, vjust = 0.5)) +
                         { if(years[1] <= 1943) { annotate("rect", xmin = 1943, xmax = 1945, ymin = -5, ymax = 5, fill = 'white') } } +
                         { if(years[1] <= 1943) { annotate("text", x = 1944, y = -15, label = "[ Tournament not held from 1943 - 1945, due to World War II ]", angle = 90, hjust = 0, vjust = 0.35) } } +
-                        { if(cut_line & years[1] <= 1956) { annotate("text", x = cutnote_xval, y = 55, label = "{ No 36-hole cut from 1934 - 1956 }", hjust = 0.5, vjust = 0.5, color = "red3", fontface = "bold") } }
+                        { if(cut_line & years[1] <= 1956) { annotate("text", x = years[1] + 1, y = 57, label = "{ No 36-hole cut from 1934 - 1956 }", hjust = 0, vjust = 0.5, color = "red3", fontface = "bold") } }
         
         return(par_fig)
 }
