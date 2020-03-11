@@ -36,8 +36,8 @@ ui <- function(request) {
                     style = "font-size: 90%"), 
                   p("Given a season, a team, and a number of games to be averaged over, the app will", tags$em('Generate'), "four things: (1) a plot of the team's average runs scored and allowed that season, (2) a complementary 
                     plot of the average run differential, (3) the data used to create the plots, and (4) a standings-like table for that season.
-                    Data are available for the ", min(master_data$Year), " to ", curSeason, "seasons. The", tags$em('Reset'), "button will reload the page.", style = "font-size: 90%"),
-                  p(tags$em('Note: during the season the data are updated on a nightly basis starting on April 20th.'), style = "font-size: 80%"), 
+                    Data are available for the ", min(master_data$Year), " to ", curSeason, "seasons. The", tags$em('Reset'), "button sets each of the options back to the initial placeholder.", style = "font-size: 90%"),
+                  p(tags$em('Note: during the season the data are updated on a nightly basis starting around April 20th.'), style = "font-size: 80%"), 
                   hr(),
         # User Input Section -------------------------------
         sidebarLayout(
