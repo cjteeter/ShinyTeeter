@@ -11,16 +11,16 @@ ui <- fluidPage(theme = shinytheme('spacelab'),
         titlePanel("A Simple Random-Decision Maker"),
         hr(),
         # App Description
-        p("This app is intended to help you limit the time and effort you spend making decisions. Even on the most standard of days we make a large number of decisions.",
-                tags$em('What should I have for dinner? Should I go out? Where should I go? What will I order? Should I just order in? What should I order?'), "While many 
-                (even most) of the decisions we make over the course of a day are fairly mundane, we often fail to account for their cumulative effect. They can lead to", 
-                tags$a(href = 'https://en.wikipedia.org/wiki/Decision_fatigue', 'decision fatigue,', target = '_blank'),
-                "which can manifest as physical fatigue and even bring about undesirable behaviour. So it is a good idea to find strategies that limit the mental 
-                effort you put into making decisions. Options include automating the decision-making processes, limiting the number of options under consideration, 
+        p("On a standard day we make a lot of decisions.",
+                tags$em('What should I wear? What should I have for dinner? Should I go out? Where should I go? What will I order? Should I just order in? What should I order?'), 
+                "While many (even most) of the decisions we make over the course of a day are fairly mundane, we often fail to account for the cumulative effect of repeatedly going 
+                through the decision making process. That effect is ", tags$a(href = 'https://en.wikipedia.org/wiki/Decision_fatigue', 'decision fatigue,', target = '_blank'),
+                "which can manifest as physical fatigue and bring about undesirable behaviour. So it is a good idea to find strategies that limit the mental 
+                effort required for making all these daily decisions. Options for doing so include automating the decision-making processes, limiting the number of options under consideration, 
                 accepting the option you'll be", tags$a(href = 'https://www.nytimes.com/2018/06/04/smarter-living/how-to-finally-just-make-a-decision.html', tags$em('fine'), 'with,', target = '_blank'),
                 "and/or leaving the decision to chance.", "For example,", tags$a(href = 'https://www.nber.org/papers/w22487.pdf#', 'flipping a coin', target = '_blank'), "can be an
                 effective way to make a decision and doing so may even increase your satisfaction with the outcome. This strategy of leaving things to chance, like the 
-                flip of a coin, is where this application is useful."),
+                flip of a coin, is where this little application is useful."),
         hr(),
         p("There are two ways to use the app:", tags$em('Simple'), "and", tags$em('Advanced'), "."),
         p(tags$b('Simple'), ": Use a slider to indicate the number of options under consideration. The decision-robot will return a number. You need to know how the number maps onto your options."),
