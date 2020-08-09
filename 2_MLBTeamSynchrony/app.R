@@ -16,10 +16,11 @@ source("datatables_gen.R")
 teams_df <- read.csv("data/MLB_teamCodes.csv", stringsAsFactors = F)
 master_data <- read.csv(curl(sprintf("https://docs.google.com/uc?id=%s&export=download", "11Z5Ze_Xh-nDZBiIZERFCv3d93-ExS_kD")), stringsAsFactors = F, na.strings = "") %>%
                 left_join(teams_df, by = c('Tm' = 'Team.Code')) %>%
-                select(Year, Full.Name, everything())
+                select(Year, Full.Name, everything()) %>%
+                filter(!((Year == 2020) & (Full.Name == "St. Louis Cardinals")))
 
 # Set some variable values -------------------------------
-curSeason <- 2019
+curSeason <- 2020
 minGames <- min(master_data %>% filter(Year == curSeason) %>% group_by(Tm) %>% summarise(Games = max(as.numeric(Gm_num))) %>% pull(Games), na.rm = T)
 sl_max <- ifelse(minGames <= 50, minGames - 1, 50)
 
@@ -126,7 +127,7 @@ ui <- function(request) {
         p("App created by ", tags$a(href = "https://www.cteeter.ca", 'Chris Teeter', target = '_blank'), " in November 2017", HTML("&bull;"), "Follow Chris on Twitter:", tags$a(href = "https://twitter.com/c_mcgeets", tags$i(class = 'fa fa-twitter'), target = '_blank'),
           HTML("&bull;"), "Find the code on Github:", tags$a(href = "https://github.com/cjteeter/ShinyTeeter/tree/master/2_MLBTeamSynchrony", tags$i(class = 'fa fa-github', style = 'color:#5000a5'), target = '_blank'), style = "font-size: 85%"),
         p("Have a question? Send an email ", tags$a(href = "mailto:christopher.teeter@gmail.com", tags$i(class = 'fa fa-envelope', style = 'color:#990000'), target = '_blank'), style = "font-size: 85%"),
-        p(tags$em("Last updated: April 2019"), style = 'font-size:75%')
+        p(tags$em("Last updated: August 2020"), style = 'font-size:75%')
 )
 }
 
@@ -178,7 +179,7 @@ server <- function(input, output, session) {
         
         # Dynamically render the slider
         output$rolling_choice_slider <- renderUI({
-                if(!is.null(values$season) && values$season == 2019 && sl_max < 50) {
+                if(!is.null(values$season) && values$season == 2020 && sl_max < 50) {
                         fluidRow(column(12,
                                         # Remove the minor ticks on the slider
                                         tags$style(type = "text/css", ".irs-grid-pol.small {height: 0px;}"),
