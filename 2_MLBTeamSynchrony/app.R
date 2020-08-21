@@ -16,8 +16,7 @@ source("datatables_gen.R")
 teams_df <- read.csv("data/MLB_teamCodes.csv", stringsAsFactors = F)
 master_data <- read.csv(curl(sprintf("https://docs.google.com/uc?id=%s&export=download", "11Z5Ze_Xh-nDZBiIZERFCv3d93-ExS_kD")), stringsAsFactors = F, na.strings = "") %>%
                 left_join(teams_df, by = c('Tm' = 'Team.Code')) %>%
-                select(Year, Full.Name, everything()) %>%
-                filter(!((Year == 2020) & (Full.Name == "St. Louis Cardinals")))
+                select(Year, Full.Name, everything())
 
 # Set some variable values -------------------------------
 curSeason <- 2020
