@@ -5,7 +5,6 @@ require(shiny)
 require(shinythemes)
 require(DT)
 require(tidyverse)
-require(curl)
 require(zoo)
 
 # Load Helper files -------------------------------
@@ -14,7 +13,8 @@ source("datatables_gen.R")
 
 # Load data -------------------------------
 teams_df <- read.csv("data/MLB_teamCodes.csv", stringsAsFactors = F)
-master_data <- read.csv(curl(sprintf("https://docs.google.com/uc?id=%s&export=download", "11Z5Ze_Xh-nDZBiIZERFCv3d93-ExS_kD")), stringsAsFactors = F, na.strings = "") %>%
+master_data <- read.csv("https://www.dropbox.com/s/ujzkrn5b6237rk5/MLB_teamSchedulesResults_1998-present.csv?dl=1", 
+                        stringsAsFactors = F, na.strings = "") %>%
                 left_join(teams_df, by = c('Tm' = 'Team.Code')) %>%
                 select(Year, Full.Name, everything())
 
