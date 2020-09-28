@@ -21,7 +21,11 @@ rs_ra_roll_plot <- function(m_df, year, team, roll_num, curSeason) {
         
         hi_wtr <- round(max(max(team_rolling$RS, na.rm = T), max(team_rolling$RA, na.rm = T), na.rm = T), 0)
         ymax_fig <- ifelse(hi_wtr %% 2 == 0, (hi_wtr + 2), (hi_wtr + 3))
-        xmax_fig <- if (year == curSeason & max(team_rolling$Game) < 136) { plyr::round_any(max(team_rolling$Game)*1.1, 5, f = ceiling)} else { 162 }
+        xmax_fig <- if (year == 2020) { 
+                        60 
+                        } else if (year == curSeason & max(team_rolling$Game) < 136) { 
+                                plyr::round_any(max(team_rolling$Game)*1.1, 5, f = ceiling) 
+                        } else { 162 }
         xscale <- if (year == curSeason & max(team_rolling$Game) <= 100) { seq(10, 100, 10) } else { seq(25, 150, 25) }
         
         avg_RS <- sprintf("%0.2f", round(mean(team_data$R, na.rm = T), 2))
@@ -79,7 +83,11 @@ rdiff_roll_plot <- function(m_df, year, team, roll_num, curSeason) {
         
         hi_diff <- round(max(abs(team_rolling$r_diff), na.rm = T), 0)
         ymax_fig <- ifelse(hi_diff %% 2 == 0, (hi_diff + 2), (hi_diff + 3))
-        xmax_fig <- if (year == curSeason & max(team_rolling$Game, na.rm = T) < 136) { plyr::round_any(max(team_rolling$Game, na.rm = T)*1.1, 5, f = ceiling)} else { 162 }
+        xmax_fig <- if (year == 2020) { 
+                        60 
+                        } else if (year == curSeason & max(team_rolling$Game) < 136) { 
+                        plyr::round_any(max(team_rolling$Game)*1.1, 5, f = ceiling) 
+                        } else { 162 }
         xscale <- if (year == curSeason & max(team_rolling$Game, na.rm = T) <= 100) { seq(10, 100, 10) } else { seq(25, 150, 25) }
         
         avg_RS <- round(mean(team_data$R, na.rm = T), 2)
