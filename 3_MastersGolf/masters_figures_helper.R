@@ -46,6 +46,11 @@ fig1_par <- function(score_data, cut_data, years, cut_line = T, finish_groups, p
                         (years[2] - years[1]) < 46 ~ 14,
                         TRUE ~ NA_real_)
         
+        y_max <- case_when(
+                        years[1] < 1957 ~ 60,
+                        years[1] >= 1957 ~ 40,
+                        TRUE ~ NA_real_)
+        
         par_fig <- ggplot(par_df) +
                         geom_hline(yintercept = 0, size = 0.5) +
                         geom_point(aes(x = Year_jit, y = Finish_Par, fill = Finish_Group_6, group = 1), size = 3.25, pch = 21, colour = "black", stroke = 1.35) +
@@ -57,9 +62,9 @@ fig1_par <- function(score_data, cut_data, years, cut_line = T, finish_groups, p
                                                          values = c('Winner' = '#076652', 'Top 10' = 'yellow3', 'Others' = 'gray60', 'Missed Cut' = 'gray20'),
                                                          guide = guide_legend(reverse = TRUE)) } } +
                         { if(cut_line) { geom_line(data = cut_df, aes(x = Year, y = Cut), size = 2, color = "red3", linetype = 'solid') } } +
-                        scale_x_continuous(breaks = seq(min(par_df$Year), max(par_df$Year), 1), limits = c(min(par_df$Year)-1, max(par_df$Year)+1), expand = expand_scale(add = 0.5)) +
-                        scale_y_continuous(breaks = seq(-20, 60, 5), limits = c(-20, 60),
-                                           labels = map_chr(seq(-20, 60, 5), ~ if(.x > 0) { paste0("+", .x) } else if(.x == 0) { "E" } else { as.character(.x) } )) +
+                        scale_x_continuous(breaks = seq(min(par_df$Year), max(par_df$Year), 1), limits = c(min(par_df$Year)-1, max(par_df$Year)+1), expand = expansion(add = 0.5)) +
+                        scale_y_continuous(breaks = seq(-20, y_max, 5), limits = c(-20, y_max),
+                                           labels = map_chr(seq(-20, y_max, 5), ~ if(.x > 0) { paste0("+", .x) } else if(.x == 0) { "E" } else { as.character(.x) } )) +
                         labs(x = 'Year', y = 'Total Score Relative to Par', caption = 'cteeter.ca') +
                         theme_teeter() +
                         theme(axis.text.x = element_text(size = x_text_size, angle = -90, hjust = 0, vjust = 0.5)) +
@@ -114,14 +119,16 @@ fig2_scrdist <- function(score_data, years, career_rounds, num_players, col_blin
                                      mid = "white", 
                                      high = ifelse(col_blind, "#5ab4ac", "springgreen4"), 
                                      midpoint = 72, guide = F) +
-                scale_y_discrete(expand = expand_scale(add = c(1, 1.75))) +
+                scale_y_discrete(expand = expansion(add = c(1, 1.75))) +
                 scale_x_continuous(breaks = seq(62, 82, 2), limits = c(62, 82), oob = rescale_none) +
                 labs(x = 'Score', y = "", 
                      title = paste(num_players, "Lowest Career Scorers"), 
                      subtitle = paste0("Among players with at least ", career_rounds, " rounds played between ", years[1],
                                       " and ", years[2], ".\n"),
                      caption = 'cteeter.ca') +
-                theme_teeter()
+                theme_teeter() +
+                theme(plot.title = element_text(hjust = 0.5),
+                      plot.subtitle = element_text(hjust = 0.5))
         
         return(scrdist_fig)
 }
@@ -150,7 +157,7 @@ fig3and4_plyr <- function(score_data, player, col_blind) {
                 scale_fill_manual(breaks = c('Winner', 'Top 10', 'Others', 'Missed Cut'), 
                                   values = c('Winner' = '#076652', 'Top 10' = 'yellow3', 'Others' = 'gray60', 'Missed Cut' = 'gray20'),
                                   guide = guide_legend(reverse = TRUE)) +
-                scale_x_continuous(breaks = seq(min(par_df$Year), max(par_df$Year), 1), limits = c(min(par_df$Year)-1, max(par_df$Year)+1), expand = expand_scale(add = 0.5)) +
+                scale_x_continuous(breaks = seq(min(par_df$Year), max(par_df$Year), 1), limits = c(min(par_df$Year)-1, max(par_df$Year)+1), expand = expansion(add = 0.5)) +
                 scale_y_continuous(breaks = seq(ymin, ymax, 5), limits = c(ymin, ymax),
                                    labels = map_chr(seq(ymin, ymax, 5), ~ if(.x > 0) { paste0("+", .x) } else if(.x == 0) { "E" } else { as.character(.x) } )) +
                 labs(x = 'Year', y = 'Total Score Relative to Par') +
@@ -183,7 +190,7 @@ fig3and4_plyr <- function(score_data, player, col_blind) {
                                      mid = "white", 
                                      high = ifelse(col_blind, "#5ab4ac", "springgreen4"),
                                      midpoint = 72, guide = F) +
-                scale_y_discrete(expand = expand_scale(add = c(0.1, 1.05))) +
+                scale_y_discrete(expand = expansion(add = c(0.1, 1.05))) +
                 scale_x_continuous(breaks = seq(xmin, xmax, 2), limits = c(xmin, xmax), oob = rescale_none) +
                 labs(x = 'Score', y = "", 
                      #title = "Career Scoring Distribution",

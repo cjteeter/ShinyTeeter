@@ -16,12 +16,12 @@ source("masters_tables_helper.R")
 source("teeter_ggplot-theme.R")
 
 # Load data -------------------------------
-masters <- read.csv('data/CT_Masters_playerscores_1934-2019.csv', stringsAsFactors = F)
-cutline <- read.csv('data/CT_Masters_cutline_1934-2019.csv', stringsAsFactors = F)
-low_rounds <- read.csv('data/CT_Masters_lowrounds_1934-2019.csv', stringsAsFactors = F)
+masters <- read.csv('data/CT_Masters_playerscores_1934-2020.csv', stringsAsFactors = F)
+cutline <- read.csv('data/CT_Masters_cutline_1934-2020.csv', stringsAsFactors = F)
+low_rounds <- read.csv('data/CT_Masters_lowrounds_1934-2020.csv', stringsAsFactors = F)
 
 # Create Variables --------------------------------------------------------
-latest_trn <- 2019
+latest_trn <- 2020
 
 # Create user interface -------------------------------
 ui <- navbarPage(
@@ -53,7 +53,7 @@ ui <- navbarPage(
                                                                    selectInput(inputId = 'par_years_start',
                                                                                label = NULL,
                                                                                choices = seq(1934, latest_trn, 1), 
-                                                                               selected = 1934)),
+                                                                               selected = 1957)),
                                                             column(2, style = 'margin-top: 7px', align = 'center', p("to")),
                                                             column(5, align = 'center',
                                                                    selectInput(inputId = 'par_years_end',
@@ -212,7 +212,8 @@ ui <- navbarPage(
                                                                           selectizeInput(inputId = "plyr_pg_player", label = NULL,
                                                                                          choices = sort(unique(masters$Player_FullName)),
                                                                                          selected = sample(c("Arnold Palmer", "Jack Nicklaus", "Tiger Woods", "Jordan Spieth", "Padraig Harrington",
-                                                                                                             "Payne Stewart", "Greg Norman", "Fred Couples", "Rory McIlroy", "Rickie Fowler"), 1),
+                                                                                                             "Payne Stewart", "Greg Norman", "Fred Couples", "Rory McIlroy", "Rickie Fowler",
+                                                                                                             "Dustin Johnson"), 1),
                                                                                          multiple = F,
                                                                                          options = list(maxOptions = 1500)))),
                                                           fluidRow(column(12, 
@@ -244,7 +245,7 @@ ui <- navbarPage(
                        p("App created by ", tags$a(href = "https://www.cteeter.ca", 'Chris Teeter', target = '_blank'), " in January 2019", HTML("&bull;"),
                          "Find the code on Github:", tags$a(href = "https://github.com/cjteeter/ShinyTeeter/tree/master/3_MastersGolf", tags$i(class = 'fa fa-github', style = 'color:#5000a5'), target = '_blank'), style = "font-size: 85%"),
                        p("Have a question? Spot an error? Send an email ", tags$a(href = "mailto:christopher.teeter@gmail.com", tags$i(class = 'fa fa-envelope', style = 'color:#990000'), target = '_blank'), style = "font-size: 85%"),
-                       p(tags$em("Last updated: April 2019"), style = 'font-size:75%')),
+                       p(tags$em("Last updated: November 2020"), style = 'font-size:75%')),
                 column(3, align = "right",
                        conditionalPanel(
                                condition = "input.masters_golf == 'Scoring Averages' | input.masters_golf == 'Player Pages'",
@@ -281,7 +282,7 @@ server <- function(input, output, session) {
         
         # If Reset button pressed, reset all filters to initial settings
         observeEvent(input$par_reset, {
-                        updateSelectInput(session, "par_years_start", selected = 1934)
+                        updateSelectInput(session, "par_years_start", selected = 1957)
                         updateSelectInput(session, "par_years_end", selected = latest_trn)
                         updateCheckboxGroupInput(session, "par_groups_L", selected = c("Winner", "Others"))
                         updateCheckboxGroupInput(session, "par_groups_R", selected = c("Top 10", "Missed Cut"))
@@ -345,7 +346,7 @@ server <- function(input, output, session) {
                                                   tags$b("Total Par: ", style = "font-size: 108%; font-family:Helvetica; color:#000000"), { if(click_df$Finish_Par > 0) { tags$em(paste0("+", click_df$Finish_Par)) } else if(click_df$Finish_Par == 0) { tags$em("E") } else { tags$em(click_df$Finish_Par) }}, br(),
                                                   tags$b("Finish Position: ", style = "font-size: 108%; font-family:Helvetica; color:#000000"), { if(click_df$Finish == 999) { tags$em("MC") } else { tags$em(click_df$Finish) }}, br(),
                                                   tags$b("Grouping: ", style = "font-size: 115%; font-family:Helvetica; color:#000000"), tags$em(click_df$Finish_Group_6), br(), br(),
-                                                  tags$b("Cut: ", style = "font-size: 85%; font-family:Helvetica; color:#000000"), { if(click_df$Year < 1957) { tags$em("No cut") } else { tags$em("+", cutline$Cut[cutline$Year == click_df$Year]) }}) }
+                                                  tags$b("Cut: ", style = "font-size: 85%; font-family:Helvetica; color:#000000"), { if(click_df$Year < 1957) { tags$em("No cut") } else { tags$em(cutline$Cut_lab[cutline$Year == click_df$Year]) }}) }
                                         else { NA }
                                                 
                         return(details)
