@@ -165,11 +165,12 @@ historical_tables <- function(score_data, rds_data, years, table, min_trns = NUL
 yearly_leaderboard <- function(score_data, year) {
         
         header <- c("Pos" = "Finish", "Player" = "Player_FullName", "R1" = "R1", "R2" = "R2", "R3" = "R3", "R4" = "R4",
-                    "Score" = "Total_Score", "Par" = "Finish_Par")
+                    "Score" = "Total_Score", "Par" = "Finish_Par", "Length" = "plyr_chars")
         tbl_oi <- score_data %>%
                         filter(Year == year, Rds_Complete == 4) %>%
                         arrange(Finish, Last_Name) %>%
                         select(Finish, Player_FullName, R1, R2, R3, R4, Total_Score, Finish_Par) %>%
+                        mutate(plyr_chars = map_chr(Player_FullName, ~ str_length(.x))) %>%
                         rename(!!header)
         
         return(tbl_oi)

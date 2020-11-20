@@ -386,15 +386,18 @@ server <- function(input, output, session) {
         tbl_lb_yearly <- reactive({ yearly_leaderboard(masters,
                                                        year = as.numeric(input$lb_yearly_year)) })
         
-        output$lb_yearly_table <- renderDT({ tbl_lb_yearly() }, 
+        output$lb_yearly_table <- renderDT({ datatable(tbl_lb_yearly(), 
                                                options = list(info = F,
                                                               paging = F,
                                                               searching = T,
                                                               stripeClasses = F, 
                                                               lengthChange = F,
                                                               scrollY = '505px',
-                                                              scrollCollapse = T),
-                                               rownames = F)
+                                                              scrollCollapse = T,
+                                                              columnDefs = list(list(targets = 8, visible = F))),
+                                               rownames = F) %>%
+                                                formatStyle("Player", "Length", 
+                                                            fontSize = styleInterval(18, c('100%', '76%'))) })
         
         # Present the Selected Historical Leaderboard Table
         tbl_lb_historical <- reactive({ historical_tables(masters,
