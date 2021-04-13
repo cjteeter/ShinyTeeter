@@ -13,15 +13,20 @@ require(extrafont)
 # Load Helper files -------------------------------
 source("masters_figures_helper.R")
 source("masters_tables_helper.R")
-source("teeter_ggplot-theme.R")
-
-# Load data -------------------------------
-masters <- read.csv('data/CT_Masters_playerscores_1934-2020.csv', stringsAsFactors = F)
-cutline <- read.csv('data/CT_Masters_cutline_1934-2020.csv', stringsAsFactors = F)
-low_rounds <- read.csv('data/CT_Masters_lowrounds_1934-2020.csv', stringsAsFactors = F)
+source("teeter_ggplot-theme_MASTERSapp.R")
 
 # Create Variables --------------------------------------------------------
-latest_trn <- 2020
+latest_trn <- 2021
+
+# Load data -------------------------------
+masters <- read.csv(paste0("data/CT_Masters_playerscores_1934-", latest_trn, ".csv"), stringsAsFactors = F)
+cutline <- read.csv(paste0("data/CT_Masters_cutline_1934-", latest_trn, ".csv"), stringsAsFactors = F)
+low_rounds <- read.csv(paste0("data/CT_Masters_lowrounds_1934-", latest_trn, ".csv"), stringsAsFactors = F)
+
+# Deal with font issue ----------------------------------------------------
+dir.create('~/.fonts')
+file.copy("www/Arial Narrow.ttf", "~/.fonts")
+system('fc-cache -f ~/.fonts')
 
 # Create user interface -------------------------------
 ui <- navbarPage(
@@ -245,7 +250,7 @@ ui <- navbarPage(
                        p("App created by ", tags$a(href = "https://www.cteeter.ca", 'Chris Teeter', target = '_blank'), " in January 2019", HTML("&bull;"),
                          "Find the code on Github:", tags$a(href = "https://github.com/cjteeter/ShinyTeeter/tree/master/3_MastersGolf", tags$i(class = 'fa fa-github', style = 'color:#5000a5'), target = '_blank'), style = "font-size: 85%"),
                        p("Have a question? Spot an error? Send an email ", tags$a(href = "mailto:christopher.teeter@gmail.com", tags$i(class = 'fa fa-envelope', style = 'color:#990000'), target = '_blank'), style = "font-size: 85%"),
-                       p(tags$em("Last updated: November 2020"), style = 'font-size:75%')),
+                       p(tags$em("Last updated: April 2021"), style = 'font-size:75%')),
                 column(3, align = "right",
                        conditionalPanel(
                                condition = "input.masters_golf == 'Scoring Averages' | input.masters_golf == 'Player Pages'",

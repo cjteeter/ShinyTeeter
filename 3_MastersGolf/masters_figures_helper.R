@@ -127,8 +127,12 @@ fig2_scrdist <- function(score_data, years, career_rounds, num_players, col_blin
                                       " and ", years[2], ".\n"),
                      caption = 'cteeter.ca') +
                 theme_teeter() +
-                theme(plot.title = element_text(hjust = 0.5),
-                      plot.subtitle = element_text(hjust = 0.5))
+                theme(plot.margin = unit(c(rep(0.5, 3), 0), "cm"),
+                      plot.title = element_text(hjust = 0.5),
+                      plot.subtitle = element_text(hjust = 0.5),
+                      axis.line.y = element_blank(),
+                      axis.ticks.y = element_blank(),
+                      axis.text.y = element_text(hjust = 1))
         
         return(scrdist_fig)
 }
@@ -190,13 +194,15 @@ fig3and4_plyr <- function(score_data, player, col_blind) {
                                      mid = "white", 
                                      high = ifelse(col_blind, "#5ab4ac", "springgreen4"),
                                      midpoint = 72, guide = F) +
-                scale_y_discrete(expand = expansion(add = c(0.1, 1.05))) +
+                scale_y_discrete(expand = expansion(add = c(0.05, 1.05))) +
                 scale_x_continuous(breaks = seq(xmin, xmax, 2), limits = c(xmin, xmax), oob = rescale_none) +
                 labs(x = 'Score', y = "", 
                      #title = "Career Scoring Distribution",
                      caption = 'cteeter.ca') +
                 theme_teeter() +
-                theme(axis.text.y = element_blank(),
+                theme(panel.border = element_rect(fill = NA),
+                      axis.line.y = element_blank(),
+                      axis.text.y = element_blank(),
                       axis.ticks.y = element_blank())
         
         scrdist_fig <- scrdist_fig +
