@@ -12,14 +12,14 @@ source("figures_gen.R")
 source("datatables_gen.R")
 
 # Load data -------------------------------
-teams_df <- read.csv("data/MLB_teamCodes.csv", stringsAsFactors = F)
+teams_df <- read.csv("app_data/MLB_teamCodes.csv", stringsAsFactors = F)
 master_data <- read.csv("https://www.dropbox.com/s/ujzkrn5b6237rk5/MLB_teamSchedulesResults_1998-present.csv?dl=1", 
                         stringsAsFactors = F, na.strings = "") %>%
                 left_join(teams_df, by = c('Tm' = 'Team.Code')) %>%
                 select(Year, Full.Name, everything())
 
 # Set some variable values -------------------------------
-curSeason <- 2020
+curSeason <- 2021
 minGames <- min(master_data %>% filter(Year == curSeason) %>% group_by(Tm) %>% summarise(Games = max(as.numeric(Gm_num))) %>% pull(Games), na.rm = T)
 sl_max <- ifelse(minGames <= 50, minGames - 1, 50)
 
@@ -126,7 +126,7 @@ ui <- function(request) {
         p("App created by ", tags$a(href = "https://www.cteeter.ca", 'Chris Teeter', target = '_blank'), " in November 2017", HTML("&bull;"), "Follow Chris on Twitter:", tags$a(href = "https://twitter.com/c_mcgeets", tags$i(class = 'fa fa-twitter'), target = '_blank'),
           HTML("&bull;"), "Find the code on Github:", tags$a(href = "https://github.com/cjteeter/ShinyTeeter/tree/master/2_MLBTeamSynchrony", tags$i(class = 'fa fa-github', style = 'color:#5000a5'), target = '_blank'), style = "font-size: 85%"),
         p("Have a question? Send an email ", tags$a(href = "mailto:christopher.teeter@gmail.com", tags$i(class = 'fa fa-envelope', style = 'color:#990000'), target = '_blank'), style = "font-size: 85%"),
-        p(tags$em("Last updated: August 2020"), style = 'font-size:75%')
+        p(tags$em("Last updated: April 2021"), style = 'font-size:75%')
 )
 }
 
@@ -178,7 +178,7 @@ server <- function(input, output, session) {
         
         # Dynamically render the slider
         output$rolling_choice_slider <- renderUI({
-                if(!is.null(values$season) && values$season == 2020 && sl_max < 50) {
+                if(!is.null(values$season) && values$season == 2021 && sl_max < 50) {
                         fluidRow(column(12,
                                         # Remove the minor ticks on the slider
                                         tags$style(type = "text/css", ".irs-grid-pol.small {height: 0px;}"),
@@ -258,19 +258,22 @@ server <- function(input, output, session) {
         
         output$figure_table <- renderDT({ 
                                         datatable(
-                                                { if (input$table_widelong == 'wide') { eventTable1() }
-                                                        else if (input$table_widelong == 'long') { 
-                                                                eventTable1_long <- gather(eventTable1(), Measure, Value, `RS/G`:R_Diff)
-                                                                eventTable1_long }}, 
-                                                options = list(info = F,
-                                                               searching = F,
-                                                               paging = F,
-                                                               scrollY = '600px',
-                                                               scrollCollapse = T,
-                                                               columnDefs = list(list(orderable = F, targets = c(0,1)), list(class = 'dt-center', targets = '_all')),
-                                                               order = list(list(2, 'asc'))), 
-                                                rownames = F) %>%
-                        formatRound(columns = c(5:7), digits = 2) })
+                                                { if (input$table_widelong == 'wide') { 
+                                                        eventTable1()
+                                                        } else { 
+                                                                eventTable1() %>%
+                                                                        pivot_longer(cols = c(`RS/G`, `RA/G`, R_Diff), 
+                                                                                     names_to = "Measure", 
+                                                                                     values_to = "Value") } }, 
+                                                                options = list(info = F,
+                                                                               searching = F,
+                                                                               paging = F,
+                                                                               scrollY = '600px',
+                                                                               scrollCollapse = T,
+                                                                               columnDefs = list(list(orderable = F, targets = c(0,1)), list(class = 'dt-center', targets = '_all')),
+                                                                               order = list(list(2, 'asc'))), 
+                                                                rownames = F) %>%
+                                formatRound(columns = { if(input$table_widelong == 'wide') { c(5:7) } else { 6 }}, digits = 2) })
         
         output$fig_tbl_link <- renderUI({ tags$a(href = link1(), eventLink1(), target = '_blank') })
         
@@ -281,8 +284,10 @@ server <- function(input, output, session) {
                                                   write.csv(
                                                           { if (input$table_widelong == 'wide') { eventTable1_dl() }
                                                                   else if (input$table_widelong == 'long') { 
-                                                                          eventTable1_long <- gather(eventTable1_dl(), Measure, Value, `RS/G`:R_Diff)
-                                                                          eventTable1_long }},
+                                                                          eventTable1_dl() %>%
+                                                                                  pivot_longer(cols = c(`RS/G`, `RA/G`, R_Diff),
+                                                                                               names_to = "Measure",
+                                                                                               values_to = "Value") }},
                                                           file, row.names = F) })
         
         # Fourth Tab - Standings Table -----------------------------------
