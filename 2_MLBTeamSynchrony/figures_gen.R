@@ -101,14 +101,14 @@ rdiff_roll_plot <- function(m_df, year, team, roll_num, curSeason) {
                         geom_bar(stat = 'identity') +
                         { if(sum(team_rolling$diff_valence == 'pos') == 0) { scale_colour_manual(values = "firebrick3",
                                                                                                  labels = "Negative",
-                                                                                                 guide = F) }
+                                                                                                 guide = "none") }
                                 else if (sum(team_rolling$diff_valence == 'neg') == 0) { scale_colour_manual(values = "dodgerblue3",
                                                                                                              labels = "Positive",
-                                                                                                             guide = F) }
+                                                                                                             guide = "none") }
                                 else { scale_colour_manual(values = c("firebrick3", "dodgerblue3"),
                                                            breaks = c("neg", "pos"),
                                                            labels = c("Negative", "Positive"),
-                                                           guide = F) } } +
+                                                           guide = "none") } } +
                         { if(sum(team_rolling$diff_valence == 'pos') == 0) { scale_fill_manual(values = alpha("firebrick3", 0.45),
                                                                                                labels = "Negative") }
                                 else if (sum(team_rolling$diff_valence == 'neg') == 0) { scale_fill_manual(values = alpha("dodgerblue3", 0.45),

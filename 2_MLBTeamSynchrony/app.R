@@ -1,26 +1,32 @@
 ##### Shiny App for Viewing the Synchrony of MLB Teams 1998-Present #####
 
 # Load required packages -------------------------------
-require(shiny)
-require(shinythemes)
-require(DT)
-require(tidyverse)
-require(zoo)
+library(shiny)
+library(shinythemes)
+library(DT)
+library(tidyverse)
+library(zoo)
 
 # Load Helper files -------------------------------
 source("figures_gen.R")
 source("datatables_gen.R")
 
 # Load data -------------------------------
-teams_df <- read.csv("app_data/MLB_teamCodes.csv", stringsAsFactors = F)
+teams_df <- read.csv("app_data/MLB_teamCodes_upd2022.csv", stringsAsFactors = F)
 master_data <- read.csv("https://www.dropbox.com/s/ujzkrn5b6237rk5/MLB_teamSchedulesResults_1998-present.csv?dl=1", 
                         stringsAsFactors = F, na.strings = "") %>%
                 left_join(teams_df, by = c('Tm' = 'Team.Code')) %>%
                 select(Year, Full.Name, everything())
 
 # Set some variable values -------------------------------
-curSeason <- 2021
-minGames <- min(master_data %>% filter(Year == curSeason) %>% group_by(Tm) %>% summarise(Games = max(as.numeric(Gm_num))) %>% pull(Games), na.rm = T)
+curSeason <- 2022
+
+minGames <- min(master_data %>% 
+                        filter(Year == curSeason) %>% 
+                        group_by(Tm) %>% 
+                        summarise(Games = max(as.numeric(Gm_num))) %>% 
+                        pull(Games), na.rm = T)
+
 sl_max <- ifelse(minGames <= 50, minGames - 1, 50)
 
 # Create user interface -------------------------------
@@ -51,7 +57,12 @@ ui <- function(request) {
                         hr(),
                         selectizeInput(inputId = "team_choice", 
                                        label = tags$h4("Select a Team:"),
-                                       choices = master_data %>% filter(Year == curSeason) %>% select(Year, Full.Name) %>% arrange(Full.Name) %>% distinct(Full.Name) %>% pull(Full.Name),
+                                       choices = master_data %>% 
+                                                        filter(Year == curSeason) %>% 
+                                                        select(Year, Full.Name) %>% 
+                                                        arrange(Full.Name) %>% 
+                                                        distinct(Full.Name) %>% 
+                                                        pull(Full.Name),
                                        selected = NULL,
                                        multiple = T,
                                        options = list(placeholder = '----------', maxItems = 1)),
@@ -62,14 +73,14 @@ ui <- function(request) {
                         br(),
                         fluidRow(column(9,
                                         actionButton(inputId = 'generate', label = 'Generate', icon = icon("bolt"), class = 'btn-primary'),
-                                        actionButton(inputId = 'reset', label = 'Reset', icon = icon("refresh"), class = 'btn-warning')),
+                                        actionButton(inputId = 'reset', label = 'Reset', icon = icon("sync"), class = 'btn-warning')),
                                  column(3, align = 'right',
                                         bookmarkButton(label = 'Share', icon = icon('share-alt')))),
                         br()),
                 # Output of Plot, Data, and Summary -------------------------------
                 mainPanel(
                         tabsetPanel(id = 'main_tabs',
-                                tabPanel("RS and RA Plot", icon = icon("area-chart"), 
+                                tabPanel("RS and RA Plot", icon = icon("chart-area"), 
                                          tags$br(), plotOutput("figure_rsra", height = 625),
                                          tags$style(type='text/css', "#fig_link_rsra {
                                                     font-family: 'Arial';
@@ -77,7 +88,7 @@ ui <- function(request) {
                                          conditionalPanel(condition = "output.figure_rsra",
                                                                 hr(), uiOutput(outputId = 'fig_link_rsra'), tags$br(),
                                                                 downloadButton(outputId = 'dl_fig_rsra', 'Download plot as .png', class = 'btn-default btn-sm'))),
-                                tabPanel("Run Diff Plot", icon = icon("bar-chart"), 
+                                tabPanel("Run Diff Plot", icon = icon("chart-bar"), 
                                          tags$br(), plotOutput("figure_rdiff", height = 625),
                                          tags$style(type='text/css', "#fig_link_rdiff {
                                                     font-family: 'Arial';
@@ -126,7 +137,7 @@ ui <- function(request) {
         p("App created by ", tags$a(href = "https://www.cteeter.ca", 'Chris Teeter', target = '_blank'), " in November 2017", HTML("&bull;"), "Follow Chris on Twitter:", tags$a(href = "https://twitter.com/c_mcgeets", tags$i(class = 'fa fa-twitter'), target = '_blank'),
           HTML("&bull;"), "Find the code on Github:", tags$a(href = "https://github.com/cjteeter/ShinyTeeter/tree/master/2_MLBTeamSynchrony", tags$i(class = 'fa fa-github', style = 'color:#5000a5'), target = '_blank'), style = "font-size: 85%"),
         p("Have a question? Send an email ", tags$a(href = "mailto:christopher.teeter@gmail.com", tags$i(class = 'fa fa-envelope', style = 'color:#990000'), target = '_blank'), style = "font-size: 85%"),
-        p(tags$em("Last updated: April 2021"), style = 'font-size:75%')
+        p(tags$em("Last updated: April 2022"), style = 'font-size:75%')
 )
 }
 
@@ -162,7 +173,8 @@ server <- function(input, output, session) {
                         updateSelectizeInput(session, inputId = "season_choice", selected = values$season)
                         updateSelectizeInput(session, inputId = "team_choice", choices = master_data %>% 
                                                                                                 filter(Year == values$season) %>% 
-                                                                                                select(Year, Full.Name) %>% arrange(Full.Name) %>% 
+                                                                                                select(Year, Full.Name) %>% 
+                                                                                                arrange(Full.Name) %>% 
                                                                                                 distinct(Full.Name) %>% 
                                                                                                 pull(Full.Name), selected = values$team)
                         updateSliderInput(session, inputId = "rolling_choice", value = values$games)
@@ -178,7 +190,7 @@ server <- function(input, output, session) {
         
         # Dynamically render the slider
         output$rolling_choice_slider <- renderUI({
-                if(!is.null(values$season) && values$season == 2021 && sl_max < 50) {
+                if(!is.null(values$season) && values$season == 2022 && sl_max < 50) {
                         fluidRow(column(12,
                                         # Remove the minor ticks on the slider
                                         tags$style(type = "text/css", ".irs-grid-pol.small {height: 0px;}"),
