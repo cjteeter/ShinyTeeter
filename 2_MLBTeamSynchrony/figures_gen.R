@@ -37,8 +37,8 @@ rs_ra_roll_plot <- function(m_df, year, team, roll_num, curSeason) {
         figure <- ggplot(team_rolling, aes(x = Game)) +
                         {if(sum(team_rolling$diff_valence == 'neg') > 0) geom_ribbon(aes(ymin = RAmin, ymax = RAmax), fill = 'firebrick3', alpha = 0.45, show.legend = F)} +
                         {if(sum(team_rolling$diff_valence == 'pos') > 0) geom_ribbon(aes(ymin = RSmin, ymax = RSmax), fill = 'dodgerblue3', alpha = 0.45, show.legend = F)} +
-                        geom_line(aes(y = RA, colour = 'firebrick3'), size = 1.35) +
-                        geom_line(aes(y = RS, colour = 'dodgerblue3'), size = 1.35) +
+                        geom_line(aes(y = RA, colour = 'firebrick3'), linewidth = 1.35) +
+                        geom_line(aes(y = RS, colour = 'dodgerblue3'), linewidth = 1.35) +
                         scale_colour_manual("", values = c("dodgerblue3", "firebrick3"), labels = c("Runs Scored", "Runs Allowed")) +
                         scale_y_continuous(breaks=seq(0.0, ymax_fig, 2.0), limits=c(0.0, ymax_fig)) +
                         scale_x_continuous(breaks=c(1, xscale, xmax_fig), limits = c(1, xmax_fig), expand = c(0.025, 0)) +
@@ -56,7 +56,8 @@ rs_ra_roll_plot <- function(m_df, year, team, roll_num, curSeason) {
                                 legend.justification = c(1, 0), legend.position = c(0.99, 0.01),
                                 plot.margin = margin(5, 5, 10, 5),
                                 plot.caption = element_text(size=12, colour="gray75", face="italic", hjust = 1, vjust = 1),
-                                panel.grid.minor=element_blank(), panel.grid.major=element_blank())
+                                panel.grid.minor = element_blank(), 
+                                panel.grid.major = element_blank())
         
         figure <- figure + 
                         annotate("text", x = 1, y = 0.9, label = paste("Record:", wins, "-", losses), hjust = 0, vjust = 0.5, size = 3, fontface = 'italic') +

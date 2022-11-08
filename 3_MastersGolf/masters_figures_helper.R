@@ -52,7 +52,7 @@ fig1_par <- function(score_data, cut_data, years, cut_line = T, finish_groups, p
                         TRUE ~ NA_real_)
         
         par_fig <- ggplot(par_df) +
-                        geom_hline(yintercept = 0, size = 0.5) +
+                        geom_hline(yintercept = 0, linewidth = 0.5) +
                         geom_point(aes(x = Year_jit, y = Finish_Par, fill = Finish_Group_6, group = 1), size = 3.25, pch = 21, colour = "black", stroke = 1.35) +
                         { if(!is.null(player_highlight)) { geom_point(data = pl_par_df, aes(x = Year_jit, y = Finish_Par, fill = Player_FullName), size = 4.5, pch = 21, stroke = 1.8, inherit.aes = F) } } +
                         { if(!is.null(player_highlight)) { scale_fill_manual(breaks = c('Winner', 'Top 10', 'Others', 'Missed Cut', sort(players)), 
@@ -61,7 +61,7 @@ fig1_par <- function(score_data, cut_data, years, cut_line = T, finish_groups, p
                                 else { scale_fill_manual(breaks = c('Winner', 'Top 10', 'Others', 'Missed Cut'), 
                                                          values = c('Winner' = '#076652', 'Top 10' = 'yellow3', 'Others' = 'gray60', 'Missed Cut' = 'gray20'),
                                                          guide = guide_legend(reverse = TRUE)) } } +
-                        { if(cut_line) { geom_line(data = cut_df, aes(x = Year, y = Cut), size = 2, color = "red3", linetype = 'solid') } } +
+                        { if(cut_line) { geom_line(data = cut_df, aes(x = Year, y = Cut), linewidth = 2, color = "red3", linetype = 'solid') } } +
                         scale_x_continuous(breaks = seq(min(par_df$Year), max(par_df$Year), 1), limits = c(min(par_df$Year)-1, max(par_df$Year)+1), expand = expansion(add = 0.5)) +
                         scale_y_continuous(breaks = seq(-20, y_max, 5), limits = c(-20, y_max),
                                            labels = map_chr(seq(-20, y_max, 5), ~ if(.x > 0) { paste0("+", .x) } else if(.x == 0) { "E" } else { as.character(.x) } )) +
@@ -118,7 +118,7 @@ fig2_scrdist <- function(score_data, years, career_rounds, num_players, col_blin
                                      low = ifelse(col_blind, "#d8b365", "red"), 
                                      mid = "white", 
                                      high = ifelse(col_blind, "#5ab4ac", "springgreen4"), 
-                                     midpoint = 72, guide = F) +
+                                     midpoint = 72, guide = "none") +
                 scale_y_discrete(expand = expansion(add = c(1, 1.75))) +
                 scale_x_continuous(breaks = seq(62, 82, 2), limits = c(62, 82), oob = rescale_none) +
                 labs(x = 'Score', y = "", 
@@ -156,7 +156,7 @@ fig3and4_plyr <- function(score_data, player, col_blind) {
         ymax <- max(5, plyr::round_any(max(par_df$Finish_Par), 5, ceiling))
         
         par_fig <- ggplot(par_df) +
-                geom_hline(yintercept = 0, size = 0.5) +
+                geom_hline(yintercept = 0, linewidth = 0.5) +
                 geom_point(aes(x = Year, y = Finish_Par, fill = Finish_Group_6, group = 1), size = 4.25, pch = 21, colour = "black", stroke = 1.35) +
                 scale_fill_manual(breaks = c('Winner', 'Top 10', 'Others', 'Missed Cut'), 
                                   values = c('Winner' = '#076652', 'Top 10' = 'yellow3', 'Others' = 'gray60', 'Missed Cut' = 'gray20'),
@@ -193,7 +193,7 @@ fig3and4_plyr <- function(score_data, player, col_blind) {
                                      low = ifelse(col_blind, "#d8b365", "red"), 
                                      mid = "white", 
                                      high = ifelse(col_blind, "#5ab4ac", "springgreen4"),
-                                     midpoint = 72, guide = F) +
+                                     midpoint = 72, guide = "none") +
                 scale_y_discrete(expand = expansion(add = c(0.05, 1.05))) +
                 scale_x_continuous(breaks = seq(xmin, xmax, 2), limits = c(xmin, xmax), oob = rescale_none) +
                 labs(x = 'Score', y = "", 
