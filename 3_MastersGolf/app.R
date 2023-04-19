@@ -16,7 +16,7 @@ source("masters_tables_helper.R")
 source("teeter_ggplot-theme_MASTERSapp.R")
 
 # Create Variables --------------------------------------------------------
-latest_trn <- 2022
+latest_trn <- 2023
 
 # Load data -------------------------------
 masters <- read.csv(paste0("data/CT_Masters_playerscores_1934-", latest_trn, ".csv"), stringsAsFactors = F)
@@ -35,7 +35,7 @@ ui <- navbarPage(
         inverse = F, 
         id = "masters_golf",
         # App Title
-        tags$div(tags$img(src='masters_logo_3.png', width = 108, height = 108, style="float:left; margin-left: 5px; margin-right: 5px; margin-top: -15px")), 
+        tags$div(tags$img(src="masters_logo_3.png", width = 108, height = 108, style="float:left; margin-left: 5px; margin-right: 5px; margin-top: -15px")), 
         
         # Yearly Tournaments ------------------------------------------------------
         tabPanel("Tournament Results",
@@ -48,37 +48,37 @@ ui <- navbarPage(
                                         # Error Message Appearance
                                         tags$head(tags$style(HTML(".shiny-output-error-validation { font-style: italic; font-size: 125%; }"))),
                                          wellPanel(style = "background-color: #fff; border-color: #2c3e50; height: 250px;",
-                                                   p(tags$em('Click on a point on the figure to get details.', style = "font-size: 70%; font-family:Helvetica; color:#4c4c4c"),
-                                                     style = 'text-align:left; margin-bottom: 15px;'),
-                                                   htmlOutput('par_plr_click')))),
+                                                   p(tags$em("Click on a point on the figure to get details.", style = "font-size: 70%; font-family:Helvetica; color:#4c4c4c"),
+                                                     style = "text-align:left; margin-bottom: 15px;"),
+                                                   htmlOutput("par_plr_click")))),
                                 fluidRow(column(12, 
                                          wellPanel(style = "background-color: #fff; border-color: #2c3e50; height: 450px;",
                                                    p(tags$b("Tournament Years:", style = "font-size: 102%")),
-                                                   fluidRow(column(5, align = 'center',
-                                                                   selectInput(inputId = 'par_years_start',
+                                                   fluidRow(column(5, align = "center",
+                                                                   selectInput(inputId = "par_years_start",
                                                                                label = NULL,
                                                                                choices = seq(1934, latest_trn, 1), 
                                                                                selected = 1957)),
-                                                            column(2, style = 'margin-top: 7px', align = 'center', p("to")),
-                                                            column(5, align = 'center',
-                                                                   selectInput(inputId = 'par_years_end',
+                                                            column(2, style = "margin-top: 7px", align = "center", p("to")),
+                                                            column(5, align = "center",
+                                                                   selectInput(inputId = "par_years_end",
                                                                                label = NULL,
                                                                                choices = seq(1934, latest_trn, 1), 
                                                                                selected = latest_trn))),
                                                    p(tags$b("Groupings to plot:", style = "font-size: 102%")),
                                                    fluidRow(style = "margin-top: -5px;",
-                                                           column(5, offset = 1, align = 'left',
+                                                           column(5, offset = 1, align = "left",
                                                                    checkboxGroupInput(inputId = "par_groups_L",
                                                                                       label = NULL,
-                                                                                      choices = list("Winner" = 'Winner',
-                                                                                                     "Others" = 'Others'),
+                                                                                      choices = list("Winner" = "Winner",
+                                                                                                     "Others" = "Others"),
                                                                                       inline = F,
                                                                                       selected = c("Winner", "Others"))),
-                                                            column(6, align = 'left',
+                                                            column(6, align = "left",
                                                                    checkboxGroupInput(inputId = "par_groups_R",
                                                                                       label = NULL,
-                                                                                      choices = list("Top 10" = 'Top 10',
-                                                                                                     "Missed Cut" = 'Missed Cut'),
+                                                                                      choices = list("Top 10" = "Top 10",
+                                                                                                     "Missed Cut" = "Missed Cut"),
                                                                                       inline = F,
                                                                                       selected = c("Top 10", "Missed Cut")))),
                                                    checkboxInput("par_cutline", label = "Show the 36-hole cut line?", value = F),
@@ -92,7 +92,7 @@ ui <- navbarPage(
                                                    br(),
                                                    hr(),
                                                    fluidRow(column(12, align = "right",
-                                                                   actionButton(inputId = 'par_reset', label = 'Reset', icon = icon("refresh"), class = 'btn btn-primary btn-sm'))))))))),
+                                                                   actionButton(inputId = "par_reset", label = "Reset", icon = icon("refresh"), class = "btn btn-primary btn-sm"))))))))),
         # Leaderboards and Historical Tables -------------------------------------------------------
         tabPanel("Leaderboards",
                  fluidRow(
@@ -100,10 +100,10 @@ ui <- navbarPage(
                                 wellPanel(style = "background-color: #fff; border-color: #2c3e50; height: 775px;",
                                           fluidRow(style = "margin-top: 25px;",
                                                   column(12, 
-                                                         p(tags$b('Yearly Tournament Leaderboard', style = "font-size: 150%; font-family:Helvetica; color:#4c4c4c; text-align:left;")))),
+                                                         p(tags$b("Yearly Tournament Leaderboard", style = "font-size: 150%; font-family:Helvetica; color:#4c4c4c; text-align:left;")))),
                                           hr(),
                                           fluidRow(column(4,
-                                                          selectInput(inputId = 'lb_yearly_year',
+                                                          selectInput(inputId = "lb_yearly_year",
                                                                       label = NULL,
                                                                       choices = sort(unique(masters$Year), decreasing = T), 
                                                                       selected = latest_trn))),
@@ -112,16 +112,16 @@ ui <- navbarPage(
                                 wellPanel(style = "background-color: #fff; border-color: #2c3e50; height: 775px;",
                                           fluidRow(style = "margin-top: 25px; margin-bottom: -10px;",
                                                    column(5, 
-                                                          p(tags$b('Historical Records', style = "font-size: 150%; font-family:Helvetica; color:#4c4c4c; text-align:left;"))),
-                                                   column(2, style = 'margin-top: 7px;', align = 'right', p("From:")),
-                                                   column(2, align = 'left',
-                                                          selectInput(inputId = 'lb_tbl_yr_start',
+                                                          p(tags$b("Historical Records", style = "font-size: 150%; font-family:Helvetica; color:#4c4c4c; text-align:left;"))),
+                                                   column(2, style = "margin-top: 7px;", align = "right", p("From:")),
+                                                   column(2, align = "left",
+                                                          selectInput(inputId = "lb_tbl_yr_start",
                                                                       label = NULL,
                                                                       choices = seq(1934, latest_trn, 1), 
                                                                       selected = 1934)),
-                                                   column(1, style = 'margin-top: 7px;', align = 'center', p("to")),
-                                                   column(2, align = 'left',
-                                                          selectInput(inputId = 'lb_tbl_yr_end',
+                                                   column(1, style = "margin-top: 7px;", align = "center", p("to")),
+                                                   column(2, align = "left",
+                                                          selectInput(inputId = "lb_tbl_yr_end",
                                                                       label = NULL,
                                                                       choices = seq(1934, latest_trn, 1), 
                                                                       selected = latest_trn))),
@@ -133,27 +133,27 @@ ui <- navbarPage(
                                                                                      "Top 5s", "Top 10s", "Top 25s", "Sub-par Rounds", 
                                                                                      "Rounds in the 60s", "Lowest Rounds"), 
                                                                          selected = "Tournaments Entered",
-                                                                         width = '85%')),
+                                                                         width = "85%")),
                                                    conditionalPanel(condition = "input.lb_tbl_choice == 'Tournaments Entered' || input.lb_tbl_choice == 'Cuts Made' || input.lb_tbl_choice == 'Top 5s' || input.lb_tbl_choice == 'Top 10s' || input.lb_tbl_choice == 'Top 25s'",
-                                                                    column(4, style = 'margin-top: 7px;', align = 'right', p("Minimum tournaments entered:")),
-                                                                    column(2, align = 'center',
-                                                                           tags$style(HTML('#min_trns{height: 35px}')),
+                                                                    column(4, style = "margin-top: 7px;", align = "right", p("Minimum tournaments entered:")),
+                                                                    column(2, align = "center",
+                                                                           tags$style(HTML("#min_trns{height: 35px}")),
                                                                            numericInput(inputId = "min_trns", 
                                                                                         label = NULL, 
                                                                                         value = 1,
                                                                                         min = 1,
                                                                                         max = 50,
-                                                                                        width = '90%'))),
+                                                                                        width = "90%"))),
                                                    conditionalPanel(condition = "input.lb_tbl_choice == 'Sub-par Rounds' || input.lb_tbl_choice == 'Rounds in the 60s' || input.lb_tbl_choice == 'Lowest Rounds'",
-                                                                    column(4, style = 'margin-top: 7px;', align = 'right', p("Minimum rounds played:")),
-                                                                    column(2, align = 'center',
-                                                                           tags$style(HTML('#min_rds{height: 30px}')),
+                                                                    column(4, style = "margin-top: 7px;", align = "right", p("Minimum rounds played:")),
+                                                                    column(2, align = "center",
+                                                                           tags$style(HTML("#min_rds{height: 30px}")),
                                                                            numericInput(inputId = "min_rds", 
                                                                                         label = NULL, 
                                                                                         value = 1,
                                                                                         min = 1,
                                                                                         max = 150,
-                                                                                        width = '90%'))),
+                                                                                        width = "90%"))),
                                                    uiOutput("tbl_reset_button")),
                                           br(),
                                           DTOutput("lb_historical_table"))))),
@@ -165,23 +165,23 @@ ui <- navbarPage(
                                                 # Error Message Appearance
                                                 tags$head(tags$style(HTML(".shiny-output-error-validation { font-style: italic; font-size: 125%; }"))),
                                                 wellPanel(style = "background-color: #fff; border-color: #2c3e50; height: 215px;",
-                                                          fluidRow(style = 'margin-top: 18px',
-                                                                  column(4, style = 'margin-top: 7px', align = 'right', p("For years:")),
-                                                                  column(3, align = 'center',
-                                                                          selectInput(inputId = 'scr_years_start',
+                                                          fluidRow(style = "margin-top: 18px",
+                                                                  column(4, style = "margin-top: 7px", align = "right", p("For years:")),
+                                                                  column(3, align = "center",
+                                                                          selectInput(inputId = "scr_years_start",
                                                                                       label = NULL,
                                                                                       choices = seq(1934, latest_trn, 1), 
                                                                                       selected = 1934)),
-                                                                   column(1, style = 'margin-top: 7px', align = 'center', p("to")),
-                                                                   column(3, align = 'center',
-                                                                          selectInput(inputId = 'scr_years_end',
+                                                                   column(1, style = "margin-top: 7px", align = "center", p("to")),
+                                                                   column(3, align = "center",
+                                                                          selectInput(inputId = "scr_years_end",
                                                                                       label = NULL,
                                                                                       choices = seq(1934, latest_trn, 1), 
                                                                                       selected = latest_trn))),
                                                           fluidRow(
-                                                                   column(4, style = 'margin-top: 15px', align = 'right', p("Min. rounds played:")),
-                                                                   column(7, align = 'left',
-                                                                          tags$style(HTML('#scr_min_rds{height: 30px}')),
+                                                                   column(4, style = "margin-top: 15px", align = "right", p("Min. rounds played:")),
+                                                                   column(7, align = "left",
+                                                                          tags$style(HTML("#scr_min_rds{height: 30px}")),
                                                                           tags$style(type = "text/css", ".irs-grid-pol.small {height: 0px;}"),
                                                                           sliderInput(inputId = "scr_min_rds", 
                                                                                       label = NULL, 
@@ -189,16 +189,16 @@ ui <- navbarPage(
                                                                                       max = 100, 
                                                                                       value = 20))),
                                                           fluidRow(
-                                                                   column(4, align = 'right', p("Plot lowest:")),
-                                                                   column(6, align = 'left',
+                                                                   column(4, align = "right", p("Plot lowest:")),
+                                                                   column(6, align = "left",
                                                                           radioButtons(inputId = "scr_num_plyrs", 
                                                                                        label = NULL,
-                                                                                       choices = list('25' = 25, '20' = 20, '15' = 15, '10' = 10, '5' = 5), 
+                                                                                       choices = list("25" = 25, "20" = 20, "15" = 15, "10" = 10, "5" = 5), 
                                                                                        selected = 10,
                                                                                        inline = T)),
-                                                                   column(2, align = 'right',
-                                                                          tags$style(HTML('#tbl_reset{height: 30px}')),
-                                                                          actionButton(inputId = 'scr_reset', label = NULL, icon = icon("refresh"), class = 'btn btn-primary btn-sm')))))),
+                                                                   column(2, align = "right",
+                                                                          tags$style(HTML("#tbl_reset{height: 30px}")),
+                                                                          actionButton(inputId = "scr_reset", label = NULL, icon = icon("refresh"), class = "btn btn-primary btn-sm")))))),
                                 fluidRow(column(12, 
                                                 wellPanel(style = "background-color: #fff; border-color: #2c3e50; height: 485px;",
                                                           DTOutput("lb_scoring"))))),
@@ -211,8 +211,8 @@ ui <- navbarPage(
                          column(6,
                                 fluidRow(column(12,
                                                 wellPanel(style = "background-color: #fff; border-color: #2c3e50; height: 220px;",
-                                                          fluidRow(style = 'margin-top: 18px',
-                                                                   column(4, style = 'margin-top: 7px', align = 'right', p("Select a player:")),
+                                                          fluidRow(style = "margin-top: 18px",
+                                                                   column(4, style = "margin-top: 7px", align = "right", p("Select a player:")),
                                                                    column(8, align = "left",
                                                                           selectizeInput(inputId = "plyr_pg_player", label = NULL,
                                                                                          choices = sort(unique(masters$Player_FullName)),
@@ -222,11 +222,11 @@ ui <- navbarPage(
                                                                                          multiple = F,
                                                                                          options = list(maxOptions = 1500)))),
                                                           fluidRow(column(12, 
-                                                                          p(tags$b('Career at The Masters:', style = "font-size: 105%; font-family:Helvetica;"), style = 'text-align:left; margin-bottom: 5px;'))),
-                                                          fluidRow(column(5, offset = 1, align = 'center',
-                                                                          htmlOutput('plyr_career_L')),
-                                                                   column(6, align = 'center',
-                                                                          htmlOutput('plyr_career_R')))))),
+                                                                          p(tags$b("Career at The Masters:", style = "font-size: 105%; font-family:Helvetica;"), style = "text-align:left; margin-bottom: 5px;"))),
+                                                          fluidRow(column(5, offset = 1, align = "center",
+                                                                          htmlOutput("plyr_career_L")),
+                                                                   column(6, align = "center",
+                                                                          htmlOutput("plyr_career_R")))))),
                                 fluidRow(column(12, 
                                                 wellPanel(style = "background-color: #fff; border-color: #2c3e50; height: 480px;",
                                                           DTOutput("plyr_pg_tournaments"))))),
@@ -246,15 +246,15 @@ ui <- navbarPage(
         hr(style = "border-color: #cbcbcb;"),
         fluidRow(
                 column(9,
-                       p('All of the data used to generate this app were obtained from ', tags$a(href = "http://www.masters.com/en_US/tournament/index.html", 'Masters.com', target = '_blank'), '.', style = "font-size: 85%"),
-                       p("App created by ", tags$a(href = "https://www.cteeter.ca", 'Chris Teeter', target = '_blank'), " in January 2019", HTML("&bull;"),
-                         "Find the code on Github:", tags$a(href = "https://github.com/cjteeter/ShinyTeeter/tree/master/3_MastersGolf", tags$i(class = 'fa fa-github', style = 'color:#5000a5'), target = '_blank'), style = "font-size: 85%"),
-                       p("Have a question? Spot an error? Send an email ", tags$a(href = "mailto:christopher.teeter@gmail.com", tags$i(class = 'fa fa-envelope', style = 'color:#990000'), target = '_blank'), style = "font-size: 85%"),
-                       p(tags$em("Last updated: April 2022"), style = 'font-size:75%')),
+                       p("All of the data used to generate this app were obtained from ", tags$a(href = "http://www.masters.com/en_US/tournament/index.html", "Masters.com", target = "_blank"), ".", style = "font-size: 85%"),
+                       p("App created by ", tags$a(href = "https://www.cteeter.ca", "Chris Teeter", target = "_blank"), " in January 2019", HTML("&bull;"),
+                         "Find the code on Github:", tags$a(href = "https://github.com/cjteeter/ShinyTeeter/tree/master/3_MastersGolf", tags$i(class = "fa fa-github", style = "color:#5000a5"), target = "_blank"), style = "font-size: 85%"),
+                       p("Have a question? Spot an error? Send an email ", tags$a(href = "mailto:christopher.teeter@gmail.com", tags$i(class = "fa fa-envelope", style = "color:#990000"), target = "_blank"), style = "font-size: 85%"),
+                       p(tags$em("Last updated: April 2023"), style = "font-size:75%")),
                 column(3, align = "right",
                        conditionalPanel(
                                condition = "input.masters_golf == 'Scoring Averages' | input.masters_golf == 'Player Pages'",
-                               p(tags$em('Check the box below to change the colour scheme of the distributions to one that is more easily read by those with color blindness.', style = "font-size: 70%; font-family:Helvetica")),
+                               p(tags$em("Check the box below to change the colour scheme of the distributions to one that is more easily read by those with color blindness.", style = "font-size: 70%; font-family:Helvetica")),
                                checkboxInput("col_blind", label = "Colourblind?", value = F)))),
         windowTitle = "The Masters Data Viz"
 )
@@ -266,15 +266,15 @@ server <- function(input, output, session) {
         # Dynamically render the reset button on the Leaderboards page
         output$tbl_reset_button <- renderUI({
                 
-                if(input$lb_tbl_choice %in% c('Wins', 'Runners-up', 'Lowest Rounds')) {
+                if(input$lb_tbl_choice %in% c("Wins", "Runners-up", "Lowest Rounds")) {
                         column(7,
-                               align = 'right',
-                               tags$style(HTML('#tbl_reset{height: 30px}')),
-                               actionButton(inputId = 'tbl_reset', label = NULL, icon = icon("refresh"), class = 'btn btn-primary btn-sm'))
+                               align = "right",
+                               tags$style(HTML("#tbl_reset{height: 30px}")),
+                               actionButton(inputId = "tbl_reset", label = NULL, icon = icon("refresh"), class = "btn btn-primary btn-sm"))
                 } else { column(1,
-                               align = 'right',
-                               tags$style(HTML('#tbl_reset{height: 30px}')),
-                               actionButton(inputId = 'tbl_reset', label = NULL, icon = icon("refresh"), class = 'btn btn-primary btn-sm')) }
+                               align = "right",
+                               tags$style(HTML("#tbl_reset{height: 30px}")),
+                               actionButton(inputId = "tbl_reset", label = NULL, icon = icon("refresh"), class = "btn btn-primary btn-sm")) }
                 })
         
         ### Tournaments Tab -----------------------------------
@@ -317,7 +317,7 @@ server <- function(input, output, session) {
                                         filter(!is.na(Finish_Par)) %>%
                                         group_by(Year, Finish_Par) %>%
                                         mutate(Year_jit = pmap_dbl(list(Year, Finish_Group_6, n()), 
-                                                                   ~ ifelse(..2 == 'Winner', ..1, 
+                                                                   ~ ifelse(..2 == "Winner", ..1, 
                                                                             round(..1 + (runif(..3, min = -jit_amnt(), max = jit_amnt()) * (..3 > 1)), 6)))) %>%
                                         ungroup() })
         
@@ -361,8 +361,8 @@ server <- function(input, output, session) {
                                                 filter(between(Year, as.numeric(input$par_years_start), as.numeric(input$par_years_end)),
                                                        Finish_Group_6 %in% c(input$par_groups_L, input$par_groups_R)),
                                         coordinfo = input$plot_click,
-                                        xvar = 'Year_jit',
-                                        yvar = 'Finish_Par',
+                                        xvar = "Year_jit",
+                                        yvar = "Finish_Par",
                                         threshold = 3,
                                         maxpoints = 3,
                                         addDist = T) %>%
@@ -397,12 +397,12 @@ server <- function(input, output, session) {
                                                               searching = T,
                                                               stripeClasses = F, 
                                                               lengthChange = F,
-                                                              scrollY = '505px',
+                                                              scrollY = "505px",
                                                               scrollCollapse = T,
                                                               columnDefs = list(list(targets = 8, visible = F))),
                                                rownames = F) %>%
                                                 formatStyle("Player", "Length", 
-                                                            fontSize = styleInterval(18, c('100%', '76%'))) })
+                                                            fontSize = styleInterval(18, c("100%", "76%"))) })
         
         # Present the Selected Historical Leaderboard Table
         tbl_lb_historical <- reactive({ historical_tables(masters,
@@ -419,10 +419,10 @@ server <- function(input, output, session) {
                                                                        stripeClasses = F, 
                                                                        lengthChange = F,
                                                                        orderMulti = T,
-                                                                       scrollY = '445px',
+                                                                       scrollY = "445px",
                                                                        scrollCollapse = T),
                                                         rownames = F) %>%
-                                                { if(input$lb_tbl_choice %in% c('Cuts Made', 'Top 5s', 'Top 10s', 'Top 25s', 'Sub-par Rounds', 'Rounds in the 60s')) { 
+                                                { if(input$lb_tbl_choice %in% c("Cuts Made", "Top 5s", "Top 10s", "Top 25s", "Sub-par Rounds", "Rounds in the 60s")) { 
                                                         formatRound(table = ., columns = 4, digits = 2) } else { formatRound(table = ., columns = 2, digits = 0) } }})
                                                         
         
@@ -471,7 +471,7 @@ server <- function(input, output, session) {
                                                               searching = T,
                                                               stripeClasses = F, 
                                                               lengthChange = F,
-                                                              scrollY = '360px',
+                                                              scrollY = "360px",
                                                               scrollCollapse = T),
                                                   rownames = F) %>%
                                                 formatRound(columns = c(3,4), digits = c(1,2)) })
@@ -492,7 +492,7 @@ server <- function(input, output, session) {
                                                                  searching = F,
                                                                  stripeClasses = F, 
                                                                  lengthChange = F,
-                                                                 scrollY = '360px',
+                                                                 scrollY = "360px",
                                                                  scrollCollapse = T),
                                                   rownames = F) })
         # Player career information
@@ -508,7 +508,7 @@ server <- function(input, output, session) {
                                   tags$b("Low Round: ", style = "font-size: 101%; font-family:Helvetica; color:#000000"), br()) }
                         else if(nrow(score_data) >= 1) {
                                 p(tags$b("Tournaments: ", style = "font-size: 101%; font-family:Helvetica; color:#000000"), tags$em(nrow(score_data)), br(),
-                                  tags$b("Cuts: ", style = "font-size: 101%; font-family:Helvetica; color:#000000"), tags$em(nrow(score_data %>% filter(!Finish_Group_6 %in% c('Missed Cut', 'Withdrew', 'Disqualified')))), br(),
+                                  tags$b("Cuts: ", style = "font-size: 101%; font-family:Helvetica; color:#000000"), tags$em(nrow(score_data %>% filter(!Finish_Group_6 %in% c("Missed Cut", "Withdrew", "Disqualified")))), br(),
                                   tags$b("Rounds: ", style = "font-size: 101%; font-family:Helvetica; color:#000000"), tags$em(nrow(rounds_data)), br(),
                                   tags$b("Low Round: ", style = "font-size: 101%; font-family:Helvetica; color:#000000"), tags$em(min(rounds_data$Score)), br()) }
                         else { NA }
@@ -531,7 +531,7 @@ server <- function(input, output, session) {
                                   tags$b("Top 5s: ", style = "font-size: 101%; font-family:Helvetica; color:#000000"), br(),
                                   tags$b("Top 10s: ", style = "font-size: 101%; font-family:Helvetica; color:#000000"), br()) }
                         else if(nrow(score_data) >= 1) {
-                                p(tags$b("Wins: ", style = "font-size: 101%; font-family:Helvetica; color:#000000"), tags$em(nrow(score_data %>% filter(Finish_Group_6 == 'Winner'))), br(),
+                                p(tags$b("Wins: ", style = "font-size: 101%; font-family:Helvetica; color:#000000"), tags$em(nrow(score_data %>% filter(Finish_Group_6 == "Winner"))), br(),
                                   tags$b("Runner-ups: ", style = "font-size: 101%; font-family:Helvetica; color:#000000"), tags$em(nrow(score_data %>% filter(Finish == 2))), br(),
                                   tags$b("Top 5s: ", style = "font-size: 101%; font-family:Helvetica; color:#000000"), tags$em(nrow(score_data %>% filter(Finish <= 5))), br(),
                                   tags$b("Top 10s: ", style = "font-size: 101%; font-family:Helvetica; color:#000000"), tags$em(nrow(score_data %>% filter(Finish <= 10))), br()) }
