@@ -12,14 +12,14 @@ source("figures_gen.R")
 source("datatables_gen.R")
 
 # Load data -------------------------------
-teams_df <- read.csv("app_data/MLB_teamCodes_upd2022.csv", stringsAsFactors = F)
+teams_df <- read.csv("app_data/MLB_teamCodes_upd2023.csv", stringsAsFactors = F)
 master_data <- read.csv("https://www.dropbox.com/s/ujzkrn5b6237rk5/MLB_teamSchedulesResults_1998-present.csv?dl=1", 
                         stringsAsFactors = F, na.strings = "") %>%
                 left_join(teams_df, by = c('Tm' = 'Team.Code')) %>%
                 select(Year, Full.Name, everything())
 
 # Set some variable values -------------------------------
-curSeason <- 2022
+curSeason <- 2023
 
 minGames <- min(master_data %>% 
                         filter(Year == curSeason) %>% 
@@ -137,7 +137,7 @@ ui <- function(request) {
         p("App created by ", tags$a(href = "https://www.cteeter.ca", 'Chris Teeter', target = '_blank'), " in November 2017", HTML("&bull;"), "Follow Chris on Twitter:", tags$a(href = "https://twitter.com/c_mcgeets", tags$i(class = 'fa fa-twitter'), target = '_blank'),
           HTML("&bull;"), "Find the code on Github:", tags$a(href = "https://github.com/cjteeter/ShinyTeeter/tree/master/2_MLBTeamSynchrony", tags$i(class = 'fa fa-github', style = 'color:#5000a5'), target = '_blank'), style = "font-size: 85%"),
         p("Have a question? Send an email ", tags$a(href = "mailto:christopher.teeter@gmail.com", tags$i(class = 'fa fa-envelope', style = 'color:#990000'), target = '_blank'), style = "font-size: 85%"),
-        p(tags$em("Last updated: April 2022"), style = 'font-size:75%')
+        p(tags$em("Last updated: April 2023"), style = 'font-size:75%')
 )
 }
 
@@ -190,7 +190,7 @@ server <- function(input, output, session) {
         
         # Dynamically render the slider
         output$rolling_choice_slider <- renderUI({
-                if(!is.null(values$season) && values$season == 2022 && sl_max < 50) {
+                if(!is.null(values$season) && values$season == 2023 && sl_max < 50) {
                         fluidRow(column(12,
                                         # Remove the minor ticks on the slider
                                         tags$style(type = "text/css", ".irs-grid-pol.small {height: 0px;}"),

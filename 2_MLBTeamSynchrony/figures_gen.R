@@ -60,9 +60,9 @@ rs_ra_roll_plot <- function(m_df, year, team, roll_num, curSeason) {
                                 panel.grid.major = element_blank())
         
         figure <- figure + 
-                        annotate("text", x = 1, y = 0.9, label = paste("Record:", wins, "-", losses), hjust = 0, vjust = 0.5, size = 3, fontface = 'italic') +
-                        annotate("text", x = 1, y = 0.5, label = paste("RS/G:", avg_RS), hjust = 0, vjust = 0.5, size = 3, fontface = 'italic') +
-                        annotate("text", x = 1, y = 0.1, label = paste("RA/G:", avg_RA), hjust = 0, vjust = 0.5, size = 3, fontface = 'italic')
+                        annotate("text", x = 1, y = 0.9, label = paste("Record:", wins, "-", losses), hjust = 0, vjust = 0.5, size = 5, fontface = 'italic') +
+                        annotate("text", x = 1, y = 0.5, label = paste("RS/G:", avg_RS), hjust = 0, vjust = 0.5, size = 5, fontface = 'italic') +
+                        annotate("text", x = 1, y = 0.1, label = paste("RA/G:", avg_RA), hjust = 0, vjust = 0.5, size = 5, fontface = 'italic')
         
         return(figure)
 }
@@ -138,8 +138,8 @@ rdiff_roll_plot <- function(m_df, year, team, roll_num, curSeason) {
                               panel.grid.minor=element_blank(), panel.grid.major=element_blank())
         
         figure <- figure + 
-                        annotate("text", x = 1, y = -ymax_fig+0.9, label = paste("Record:", wins, "-", losses), hjust = 0, vjust = 0.5, size = 3, fontface = 'italic') +
-                        annotate("text", x = 1, y = -ymax_fig+0.5, label = paste("Avg. R_Diff:", avg_R_diff), hjust = 0, vjust = 0.5, size = 3, fontface = 'italic')
+                        annotate("text", x = 1, y = -ymax_fig+0.9, label = paste("Record:", wins, "-", losses), hjust = 0, vjust = 0.5, size = 5, fontface = 'italic') +
+                        annotate("text", x = 1, y = -ymax_fig+0.5, label = paste("Avg. Run differential:", avg_R_diff), hjust = 0, vjust = 0.5, size = 5, fontface = 'italic')
         
         return(figure)
 }
