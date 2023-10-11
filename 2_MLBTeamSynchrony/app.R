@@ -12,10 +12,10 @@ source("figures_gen.R")
 source("datatables_gen.R")
 
 # Load data -------------------------------
-teams_df <- read.csv("app_data/MLB_teamCodes_upd2023.csv", stringsAsFactors = F)
+teams_df <- read.csv("app_data/MLB_teamCodes_upd2024.csv", stringsAsFactors = F)
 master_data <- read.csv("https://www.dropbox.com/s/ujzkrn5b6237rk5/MLB_teamSchedulesResults_1998-present.csv?dl=1", 
                         stringsAsFactors = F, na.strings = "") %>%
-                left_join(teams_df, by = c('Tm' = 'Team.Code')) %>%
+                left_join(teams_df, by = c("Tm.Alt" = "Team.Code.Alt")) %>%
                 select(Year, Full.Name, everything())
 
 # Set some variable values -------------------------------
@@ -31,19 +31,19 @@ sl_max <- ifelse(minGames <= 50, minGames - 1, 50)
 
 # Create user interface -------------------------------
 ui <- function(request) {
-        fluidPage(theme = shinytheme('spacelab'),
-                  id = 'synchrony',
+        fluidPage(theme = shinytheme("spacelab"),
+                  id = "synchrony",
                   # App Title
                   titlePanel(tags$b("MLB Team Synchrony", style = "font-size: 110%, font-family:Helvetica; color:#010151"), windowTitle = "MLB Team Synchrony"),
                   hr(),
                   # App Description
-                  p("Teams' run scoring and run prevention performance varies throughout the season. Teams that are", tags$em('in-sync'), "have both components performing well (or poorly) at the same time, while teams that are", 
-                    tags$em('out-of-sync'), "have one component performing well and the other struggling. This app helps demonstrate the variability and synchrony (or lack thereof) of teams' run scoring and prevention over a season.", 
+                  p("Teams' run scoring and run prevention performance varies throughout the season. Teams that are", tags$em("in-sync"), "have both components performing well (or poorly) at the same time, while teams that are", 
+                    tags$em("out-of-sync"), "have one component performing well and the other struggling. This app helps demonstrate the variability and synchrony (or lack thereof) of teams' run scoring and prevention over a season.", 
                     style = "font-size: 90%"), 
-                  p("Given a season, a team, and a number of games to be averaged over, the app will", tags$em('Generate'), "four things: (1) a plot of the team's average runs scored and allowed that season, (2) a complementary 
+                  p("Given a season, a team, and a number of games to be averaged over, the app will", tags$em("Generate"), "four things: (1) a plot of the team's average runs scored and allowed that season, (2) a complementary 
                     plot of the average run differential, (3) the data used to create the plots, and (4) a standings-like table for that season.
-                    Data are available for the ", min(master_data$Year), " to ", curSeason, "seasons. The", tags$em('Reset'), "button sets each of the options back to the initial placeholder.", style = "font-size: 90%"),
-                  p(tags$em('Note: during the season the data are updated on a nightly basis starting around April 20th.'), style = "font-size: 80%"), 
+                    Data are available for the ", min(master_data$Year), " to ", curSeason, "seasons. The", tags$em("Reset"), "button sets each of the options back to the initial placeholder.", style = "font-size: 90%"),
+                  p(tags$em("Note: during the season the data are updated on a nightly basis starting around April 20th."), style = "font-size: 80%"), 
                   hr(),
         # User Input Section -------------------------------
         sidebarLayout(
@@ -53,7 +53,7 @@ ui <- function(request) {
                                        choices = seq(curSeason, min(master_data$Year), -1),
                                        selected = NULL,
                                        multiple = T,
-                                       options = list(placeholder = '----------', maxItems = 1)),
+                                       options = list(placeholder = "----------", maxItems = 1)),
                         hr(),
                         selectizeInput(inputId = "team_choice", 
                                        label = tags$h4("Select a Team:"),
@@ -65,49 +65,49 @@ ui <- function(request) {
                                                         pull(Full.Name),
                                        selected = NULL,
                                        multiple = T,
-                                       options = list(placeholder = '----------', maxItems = 1)),
+                                       options = list(placeholder = "----------", maxItems = 1)),
                         hr(),
                         uiOutput("rolling_choice_slider"),
                         br(),
                         hr(),
                         br(),
                         fluidRow(column(9,
-                                        actionButton(inputId = 'generate', label = 'Generate', icon = icon("bolt"), class = 'btn-primary'),
-                                        actionButton(inputId = 'reset', label = 'Reset', icon = icon("sync"), class = 'btn-warning')),
-                                 column(3, align = 'right',
-                                        bookmarkButton(label = 'Share', icon = icon('share-alt')))),
+                                        actionButton(inputId = "generate", label = "Generate", icon = icon("bolt"), class = "btn-primary"),
+                                        actionButton(inputId = "reset", label = "Reset", icon = icon("sync"), class = "btn-warning")),
+                                 column(3, align = "right",
+                                        bookmarkButton(label = "Share", icon = icon("share-alt")))),
                         br()),
                 # Output of Plot, Data, and Summary -------------------------------
                 mainPanel(
-                        tabsetPanel(id = 'main_tabs',
+                        tabsetPanel(id = "main_tabs",
                                 tabPanel("RS and RA Plot", icon = icon("chart-area"), 
                                          tags$br(), plotOutput("figure_rsra", height = 625),
-                                         tags$style(type='text/css', "#fig_link_rsra {
+                                         tags$style(type = "text/css", "#fig_link_rsra {
                                                     font-family: 'Arial';
                                                     font-size: 65%;}"),
                                          conditionalPanel(condition = "output.figure_rsra",
-                                                                hr(), uiOutput(outputId = 'fig_link_rsra'), tags$br(),
-                                                                downloadButton(outputId = 'dl_fig_rsra', 'Download plot as .png', class = 'btn-default btn-sm'))),
+                                                                hr(), uiOutput(outputId = "fig_link_rsra"), tags$br(),
+                                                                downloadButton(outputId = "dl_fig_rsra", "Download plot as .png", class = "btn-default btn-sm"))),
                                 tabPanel("Run Diff Plot", icon = icon("chart-bar"), 
                                          tags$br(), plotOutput("figure_rdiff", height = 625),
-                                         tags$style(type='text/css', "#fig_link_rdiff {
+                                         tags$style(type="text/css", "#fig_link_rdiff {
                                                     font-family: 'Arial';
                                                     font-size: 65%;}"),
                                          conditionalPanel(condition = "output.figure_rdiff",
-                                                                hr(), uiOutput(outputId = 'fig_link_rdiff'), tags$br(),
-                                                                downloadButton(outputId = 'dl_fig_rdiff', 'Download plot as .png', class = 'btn-default btn-sm'))),
+                                                                hr(), uiOutput(outputId = "fig_link_rdiff"), tags$br(),
+                                                                downloadButton(outputId = "dl_fig_rdiff", "Download plot as .png", class = "btn-default btn-sm"))),
                                 tabPanel("Data Table", icon = icon("table"),
                                          tags$br(), 
                                          conditionalPanel(condition = "output.figure_table",
-                                                                radioButtons(inputId = "table_widelong", label = 'Table Format:', choices = list("Wide" = 'wide', "Long" = 'long'),
-                                                                inline = T, selected = 'wide')),
+                                                                radioButtons(inputId = "table_widelong", label = "Table Format:", choices = list("Wide" = "wide", "Long" = "long"),
+                                                                inline = T, selected = "wide")),
                                          dataTableOutput("figure_table"),
-                                         tags$style(type='text/css', "#fig_tbl_link {
+                                         tags$style(type="text/css", "#fig_tbl_link {
                                                     font-family: 'Arial';
                                                     font-size: 65%;}"),
                                          conditionalPanel(condition = "output.figure_table",
-                                                                tags$br(), uiOutput(outputId = 'fig_tbl_link'), tags$br(),
-                                                                downloadButton(outputId = 'dl_tbl1', 'Download table as .csv', class = 'btn-default btn-sm'))), 
+                                                                tags$br(), uiOutput(outputId = "fig_tbl_link"), tags$br(),
+                                                                downloadButton(outputId = "dl_tbl1", "Download table as .csv", class = "btn-default btn-sm"))), 
                                 tabPanel("Season Standings Table", icon = icon("table"),
                                          tags$br(),
                                          conditionalPanel(condition = "output.standings_table",
@@ -119,25 +119,25 @@ ui <- function(request) {
                                                                         selectizeInput(inputId = "division", label = "Division:",
                                                                                        choices = c("All", "East", "Central", "West"), selected = "All")))),
                                          dataTableOutput("standings_table"),
-                                         tags$style(type='text/css', "#stnd_link {
+                                         tags$style(type="text/css", "#stnd_link {
                                                     font-family: 'Arial';
                                                     font-size: 65%;}"),
                                          conditionalPanel(condition = "output.standings_table", tags$br(),
-                                                          p(tags$small(tags$em('Pythagorean expectation numbers use 1.83 as the exponent'))),
-                                                          p(tags$small('CV is the', tags$a(href = 'https://en.wikipedia.org/wiki/Coefficient_of_variation', 'Coefficient of Variation', target = '_blank'))),
-                                                          tags$br(), uiOutput(outputId = 'stnd_link'), tags$br(),
-                                                          downloadButton(outputId = 'dl_tbl2', 'Download table as .csv', class = 'btn-default btn-sm')))
+                                                          p(tags$small(tags$em("Pythagorean expectation numbers use 1.83 as the exponent"))),
+                                                          p(tags$small("CV is the", tags$a(href = "https://en.wikipedia.org/wiki/Coefficient_of_variation", "Coefficient of Variation", target = "_blank"))),
+                                                          tags$br(), uiOutput(outputId = "stnd_link"), tags$br(),
+                                                          downloadButton(outputId = "dl_tbl2", "Download table as .csv", class = "btn-default btn-sm")))
                         )
                 )
         ),
         # Footer -------------------------------
         tags$br(),
         hr(),
-        p('All of the data used to generate the figures and tables were obtained from the incredible resource that is ', tags$a(href = "https://www.baseball-reference.com/", 'Baseball-Reference.com', target = '_blank'), '.', style = "font-size: 85%"),
-        p("App created by ", tags$a(href = "https://www.cteeter.ca", 'Chris Teeter', target = '_blank'), " in November 2017", HTML("&bull;"), "Follow Chris on Twitter:", tags$a(href = "https://twitter.com/c_mcgeets", tags$i(class = 'fa fa-twitter'), target = '_blank'),
-          HTML("&bull;"), "Find the code on Github:", tags$a(href = "https://github.com/cjteeter/ShinyTeeter/tree/master/2_MLBTeamSynchrony", tags$i(class = 'fa fa-github', style = 'color:#5000a5'), target = '_blank'), style = "font-size: 85%"),
-        p("Have a question? Send an email ", tags$a(href = "mailto:christopher.teeter@gmail.com", tags$i(class = 'fa fa-envelope', style = 'color:#990000'), target = '_blank'), style = "font-size: 85%"),
-        p(tags$em("Last updated: April 2023"), style = 'font-size:75%')
+        p("All of the data used to generate the figures and tables were obtained from the incredible resource that is ", tags$a(href = "https://www.baseball-reference.com/", "Baseball-Reference.com", target = "_blank"), ".", style = "font-size: 85%"),
+        p("App created by ", tags$a(href = "https://www.cteeter.ca", "Chris Teeter", target = "_blank"), " in November 2017", HTML("&bull;"), "Follow Chris on Twitter:", tags$a(href = "https://twitter.com/c_mcgeets", tags$i(class = "fa fa-twitter"), target = "_blank"),
+          HTML("&bull;"), "Find the code on Github:", tags$a(href = "https://github.com/cjteeter/ShinyTeeter/tree/master/2_MLBTeamSynchrony", tags$i(class = "fa fa-github", style = "color:#5000a5"), target = "_blank"), style = "font-size: 85%"),
+        p("Have a question? Send an email ", tags$a(href = "mailto:christopher.teeter@gmail.com", tags$i(class = "fa fa-envelope", style = "color:#990000"), target = "_blank"), style = "font-size: 85%"),
+        p(tags$em("Last updated: April 2023"), style = "font-size:75%")
 )
 }
 
@@ -207,10 +207,10 @@ server <- function(input, output, session) {
         observeEvent(input$reset, { 
                         updateSelectizeInput(session, inputId = "season_choice", 
                                              choices = seq(curSeason, min(master_data$Year), -1),
-                                             selected = '----------')
+                                             selected = "----------")
                         updateSelectizeInput(session, inputId = "team_choice", 
                                              choices = master_data %>% filter(Year == curSeason) %>% select(Year, Full.Name) %>% arrange(Full.Name) %>% distinct(Full.Name) %>% pull(Full.Name),
-                                             selected = '----------')
+                                             selected = "----------")
                         updateSliderInput(session, inputId = "rolling_choice", value = 5)
                         values$season <- NULL
                         values$team <- NULL
@@ -223,7 +223,7 @@ server <- function(input, output, session) {
                                                                                 select(Year, Full.Name) %>% arrange(Full.Name) %>% 
                                                                                 distinct(Full.Name) %>% 
                                                                                 pull(Full.Name), 
-                                                                 selected = ifelse(!is.null(values$team), values$team, '----------')) }, ignoreInit = T)
+                                                                 selected = ifelse(!is.null(values$team), values$team, "----------")) }, ignoreInit = T)
         
         # Create variables for commonly used items -------------------------------
         tm_code <- eventReactive(input$generate + values$launch, { 
@@ -238,16 +238,16 @@ server <- function(input, output, session) {
         
         output$figure_rsra <- renderPlot({ eventPlot_rsra() })
         
-        link1 <- eventReactive(input$generate + values$launch, { as.character({ paste0('https://www.baseball-reference.com/teams/', tm_code(),
-                                                                       '/', values$season, '-schedule-scores.shtml') }) })
+        link1 <- eventReactive(input$generate + values$launch, { as.character({ paste0("https://www.baseball-reference.com/teams/", tm_code(),
+                                                                       "/", values$season, "-schedule-scores.shtml") }) })
         eventLink1 <- eventReactive(input$generate + values$launch, {
-                                    as.character({ paste(values$season, values$team, 'schedule and results on Baseball-Reference.com') }) })
+                                    as.character({ paste(values$season, values$team, "schedule and results on Baseball-Reference.com") }) })
         
-        output$fig_link_rsra <- renderUI({ tags$a(href = link1(), eventLink1(), target = '_blank') })
+        output$fig_link_rsra <- renderUI({ tags$a(href = link1(), eventLink1(), target = "_blank") })
         
         eventPlot_rsra_dl <- function(){ rs_ra_roll_plot(master_data, values$season, values$team, values$games, curSeason) }
         
-        output$dl_fig_rsra <- downloadHandler(filename = function() { paste0('MLBsyncrony_', values$season, '_', tm_code(), '_RS-RA_plot_dl-', Sys.Date(), '.png') },
+        output$dl_fig_rsra <- downloadHandler(filename = function() { paste0("MLBsyncrony_", values$season, "_", tm_code(), "_RS-RA_plot_dl-", Sys.Date(), ".png") },
                                               content = function(file) { ggsave(file, width = 9, height = 6, plot = eventPlot_rsra_dl(), device = "png") })
         
         
@@ -257,11 +257,11 @@ server <- function(input, output, session) {
         
         output$figure_rdiff <- renderPlot({ eventPlot_rdiff() })
         
-        output$fig_link_rdiff <- renderUI({ tags$a(href = link1(), eventLink1(), target = '_blank') })
+        output$fig_link_rdiff <- renderUI({ tags$a(href = link1(), eventLink1(), target = "_blank") })
         
         eventPlot_rdiff_dl <- function(){ rdiff_roll_plot(master_data, values$season, values$team, values$games, curSeason) }
         
-        output$dl_fig_rdiff <- downloadHandler(filename = function() { paste0('MLBsyncrony_', values$season, '_', tm_code(), '_RDiff_plot_dl-', Sys.Date(), '.png') },
+        output$dl_fig_rdiff <- downloadHandler(filename = function() { paste0("MLBsyncrony_", values$season, "_", tm_code(), "_RDiff_plot_dl-", Sys.Date(), ".png") },
                                                content = function(file) { ggsave(file, width = 9, height = 6, plot = eventPlot_rdiff_dl(), device = "png") })
         
         # Third Tab - Data Table for Figure -----------------------------------
@@ -270,7 +270,7 @@ server <- function(input, output, session) {
         
         output$figure_table <- renderDT({ 
                                         datatable(
-                                                { if (input$table_widelong == 'wide') { 
+                                                { if (input$table_widelong == "wide") { 
                                                         eventTable1()
                                                         } else { 
                                                                 eventTable1() %>%
@@ -280,22 +280,22 @@ server <- function(input, output, session) {
                                                                 options = list(info = F,
                                                                                searching = F,
                                                                                paging = F,
-                                                                               scrollY = '600px',
+                                                                               scrollY = "600px",
                                                                                scrollCollapse = T,
-                                                                               columnDefs = list(list(orderable = F, targets = c(0,1)), list(class = 'dt-center', targets = '_all')),
-                                                                               order = list(list(2, 'asc'))), 
+                                                                               columnDefs = list(list(orderable = F, targets = c(0,1)), list(class = "dt-center", targets = "_all")),
+                                                                               order = list(list(2, "asc"))), 
                                                                 rownames = F) %>%
-                                formatRound(columns = { if(input$table_widelong == 'wide') { c(5:7) } else { 6 }}, digits = 2) })
+                                formatRound(columns = { if(input$table_widelong == "wide") { c(5:7) } else { 6 }}, digits = 2) })
         
-        output$fig_tbl_link <- renderUI({ tags$a(href = link1(), eventLink1(), target = '_blank') })
+        output$fig_tbl_link <- renderUI({ tags$a(href = link1(), eventLink1(), target = "_blank") })
         
         eventTable1_dl <- function(){ figdata_tbl(master_data, values$season, values$team, values$games) }
         
-        output$dl_tbl1 <- downloadHandler(filename = function() { paste0('MLBsyncrony_', values$season, '_', tm_code(), '_DataTable-', {if (input$table_widelong == 'wide') { 'wide' } else { 'long' }}, '_dl-', Sys.Date(), '.csv') },
+        output$dl_tbl1 <- downloadHandler(filename = function() { paste0("MLBsyncrony_", values$season, "_", tm_code(), "_DataTable-", {if (input$table_widelong == "wide") { "wide" } else { "long" }}, "_dl-", Sys.Date(), ".csv") },
                                           content = function(file) {
                                                   write.csv(
-                                                          { if (input$table_widelong == 'wide') { eventTable1_dl() }
-                                                                  else if (input$table_widelong == 'long') { 
+                                                          { if (input$table_widelong == "wide") { eventTable1_dl() }
+                                                                  else if (input$table_widelong == "long") { 
                                                                           eventTable1_dl() %>%
                                                                                   pivot_longer(cols = c(`RS/G`, `RA/G`, R_Diff),
                                                                                                names_to = "Measure",
@@ -311,15 +311,15 @@ server <- function(input, output, session) {
                                                 if (input$league != "Both") { eventTable2 <- eventTable2 %>% filter(League == input$league) }
                                                 if (input$division != "All") { eventTable2<- eventTable2 %>% filter(Division == input$division) }
                                                 eventTable2 },
-                                                extensions = 'FixedColumns',
+                                                extensions = "FixedColumns",
                                                 options = list(info = F, 
                                                                searching = F,
                                                                paging = F,
                                                                scrollX = T,
-                                                               scrollY = '600px',
+                                                               scrollY = "600px",
                                                                scrollCollapse = T,
-                                                               columnDefs = list(list(orderable = F, targets = c(0,1)), list(class = 'dt-center', targets = '_all')),
-                                                               order = list(list(7, 'desc')),
+                                                               columnDefs = list(list(orderable = F, targets = c(0,1)), list(class = "dt-center", targets = "_all")),
+                                                               order = list(list(7, "desc")),
                                                                fixedColumns = list(leftColumns = 2)),
                                                 rownames = F) %>%
                         formatRound(columns = c(8, 12, 14:19), digits = c(3, 3, rep(2, 6))) })
@@ -327,14 +327,14 @@ server <- function(input, output, session) {
         
         eventTable2_dl <- function(){ standings_tbl(master_data, values$season) }
         
-        link2 <- eventReactive(input$generate + values$launch, { as.character({ paste0('https://www.baseball-reference.com/leagues/MLB/', values$season, '-standings.shtml') }) })
+        link2 <- eventReactive(input$generate + values$launch, { as.character({ paste0("https://www.baseball-reference.com/leagues/MLB/", values$season, "-standings.shtml") }) })
         
         eventLink2 <- eventReactive(input$generate + values$launch, {
-                                        as.character({ paste(values$season, 'Standings on Baseball-Reference.com') }) })
+                                        as.character({ paste(values$season, "Standings on Baseball-Reference.com") }) })
         
-        output$stnd_link <- renderUI({ tags$a(href = link2(), eventLink2(), target = '_blank') })
+        output$stnd_link <- renderUI({ tags$a(href = link2(), eventLink2(), target = "_blank") })
 
-        output$dl_tbl2 <- downloadHandler(filename = function() { paste0('MLBsyncrony_', values$season, '_Standings-plus_dl-', Sys.Date(), '.csv') },
+        output$dl_tbl2 <- downloadHandler(filename = function() { paste0("MLBsyncrony_", values$season, "_Standings-plus_dl-", Sys.Date(), ".csv") },
                                           content = function(file) { write.csv(eventTable2_dl(), file, row.names = F) })
         
         # Reset Launch value
