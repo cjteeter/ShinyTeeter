@@ -46,18 +46,20 @@ rs_ra_roll_plot <- function(m_df, year, team, roll_num, curSeason) {
                              title = paste(year, team), caption = "cteeter.ca") +
                         theme_bw() +
                         theme(plot.title = element_text(face="bold", size=26, vjust=0.5, hjust=0.5),
-                                axis.title.x = element_text(face="bold", size=14, vjust=0.5), 
-                                axis.title.y = element_text(face="bold", size=14, vjust=0.5),
-                                axis.text.x = element_text(size=12, colour="black", face="bold"),
-                                axis.text.y = element_text(size=12, colour="black", face="bold"),
-                                legend.text = element_text(size=10, colour="black", face="bold"),
-                                legend.background = element_rect(fill = "transparent"),
-                                legend.key = element_rect(fill = "transparent"),
-                                legend.justification = c(1, 0), legend.position = c(0.99, 0.01),
-                                plot.margin = margin(5, 5, 10, 5),
-                                plot.caption = element_text(size=12, colour="gray75", face="italic", hjust = 1, vjust = 1),
-                                panel.grid.minor = element_blank(), 
-                                panel.grid.major = element_blank())
+                              axis.title.x = element_text(face="bold", size=14, vjust=0.5), 
+                              axis.title.y = element_text(face="bold", size=14, vjust=0.5),
+                              axis.text.x = element_text(size=12, colour="black", face="bold"),
+                              axis.text.y = element_text(size=12, colour="black", face="bold"),
+                              legend.text = element_text(size=10, colour="black", face="bold"),
+                              legend.background = element_rect(fill = "transparent"),
+                              legend.key = element_rect(fill = "transparent"),
+                              legend.position = "inside",
+                              legend.position.inside = c(0.99, 0.01),
+                              legend.justification.inside = c(1, 0),
+                              plot.margin = margin(5, 5, 10, 5),
+                              plot.caption = element_text(size=12, colour="gray75", face="italic", hjust = 1, vjust = 1),
+                              panel.grid.minor = element_blank(), 
+                              panel.grid.major = element_blank())
         
         figure <- figure + 
                         annotate("text", x = 1, y = 0.9, label = paste("Record:", wins, "-", losses), hjust = 0, vjust = 0.5, size = 5, fontface = 'italic') +
@@ -132,14 +134,16 @@ rdiff_roll_plot <- function(m_df, year, team, roll_num, curSeason) {
                               legend.text = element_text(size=10, colour="black", face="bold"),
                               legend.background = element_rect(fill = "transparent"),
                               legend.key = element_rect(fill = "transparent"),
-                              legend.justification = c(1, 0), legend.position = c(0.99, 0.01),
+                              legend.position = "inside",
+                              legend.position.inside = c(0.99, 0.01),
+                              legend.justification.inside = c(1, 0),
                               plot.margin = margin(5, 5, 10, 5),
                               plot.caption = element_text(size=12, colour="gray75", face="italic", hjust = 1, vjust = 1),
                               panel.grid.minor=element_blank(), panel.grid.major=element_blank())
         
         figure <- figure + 
-                        annotate("text", x = 1, y = -ymax_fig+0.9, label = paste("Record:", wins, "-", losses), hjust = 0, vjust = 0.5, size = 5, fontface = 'italic') +
-                        annotate("text", x = 1, y = -ymax_fig+0.5, label = paste("Avg. Run differential:", avg_R_diff), hjust = 0, vjust = 0.5, size = 5, fontface = 'italic')
+                        annotate("text", x = 1, y = -ymax_fig + 1.1, label = paste("Record:", wins, "-", losses), hjust = 0, vjust = 0.5, size = 5, fontface = 'italic') +
+                        annotate("text", x = 1, y = -ymax_fig + 0.5, label = paste("Avg. Run differential:", avg_R_diff), hjust = 0, vjust = 0.5, size = 5, fontface = 'italic')
         
         return(figure)
 }
