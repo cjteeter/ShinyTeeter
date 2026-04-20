@@ -16,7 +16,7 @@ source("masters_tables_helper.R")
 source("teeter_ggplot-theme_MASTERSapp.R")
 
 # Create Variables --------------------------------------------------------
-latest_trn <- 2025
+latest_trn <- 2026
 
 # Load data -------------------------------
 masters <- read.csv(paste0("data/CT_Masters_playerscores_1934-", latest_trn, ".csv"), stringsAsFactors = F)
@@ -241,7 +241,7 @@ ui <- navbarPage(
                  fluidRow(
                          column(12,
                                 wellPanel(style = "background-color: #fff; border-color: #2c3e50;",
-                                          includeHTML("about_masters.html"))))),
+                                          includeHTML("www/about_masters.html"))))),
         # Footer -------------------------------
         hr(style = "border-color: #cbcbcb;"),
         fluidRow(
@@ -250,7 +250,7 @@ ui <- navbarPage(
                        p("App created by ", tags$a(href = "https://www.cteeter.ca", "Chris Teeter", target = "_blank"), " in January 2019", HTML("&bull;"),
                          "Find the code on Github:", tags$a(href = "https://github.com/cjteeter/ShinyTeeter/tree/master/3_MastersGolf", tags$i(class = "fa fa-github", style = "color:#5000a5"), target = "_blank"), style = "font-size: 85%"),
                        p("Have a question? Spot an error? Send an email ", tags$a(href = "mailto:christopher.teeter@gmail.com", tags$i(class = "fa fa-envelope", style = "color:#990000"), target = "_blank"), style = "font-size: 85%"),
-                       p(tags$em("Last updated: April 2025"), style = "font-size:75%")),
+                       p(tags$em("Last updated: April 2026"), style = "font-size:75%")),
                 column(3, align = "right",
                        conditionalPanel(
                                condition = "input.masters_golf == 'Scoring Averages' | input.masters_golf == 'Player Pages'",

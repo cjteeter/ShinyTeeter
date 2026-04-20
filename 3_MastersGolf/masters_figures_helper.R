@@ -111,7 +111,7 @@ fig2_scrdist <- function(score_data, years, career_rounds, num_players, col_blin
                         left_join(players_to_plot %>% select(Player_FullName, Rank), by = "Player_FullName")
         
         # Create Plot
-        scrdist_fig <- ggplot(rounds_df_fig, aes(x = Score, y = reorder(Player_FullName, Rank), fill = ..x..)) +
+        scrdist_fig <- ggplot(rounds_df_fig, aes(x = Score, y = reorder(Player_FullName, Rank), fill = after_stat(x))) +
                 stat_density_ridges(geom = "density_ridges_gradient", calc_ecdf = T,
                                     quantile_lines = T, quantiles = 2, alpha = 0.90, scale = 1.25, linewidth = 1.05) +
                 scale_fill_gradient2(limits = c(62, 82), 
@@ -186,7 +186,7 @@ fig3and4_plyr <- function(score_data, player, col_blind) {
         xmax <- max(82, plyr::round_any(max(rounds_df$Score), 2, ceiling))
         
         # Create Plot
-        scrdist_fig <- ggplot(rounds_df, aes(x = Score, y = Player_FullName, fill = ..x..)) +
+        scrdist_fig <- ggplot(rounds_df, aes(x = Score, y = Player_FullName, fill = after_stat(x))) +
                 stat_density_ridges(geom = "density_ridges_gradient", calc_ecdf = T,
                                     quantile_lines = T, quantiles = 2, alpha = 0.90, scale = 5, linewidth = 1.05) +
                 scale_fill_gradient2(limits = c(xmin, xmax), 
